@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 
 import PatientForm from '../../components/PatientForm/PatientForm';
 import DataTable from '../../components/DataTable/DataTable';
+import Searcher from '../../components/Searcher/Searcher'
 
 export default function PatientBasicScreen () {
     const tableColumns = [
@@ -40,6 +41,10 @@ export default function PatientBasicScreen () {
         setTableData([]);
     };
 
+    const buscarData = () => {
+        console.log(buscador)
+    }
+
     const [tableData, setTableData] = useState([]);
     const [clienteId, setClienteId] = useState('');
     const [nombres, setNombres] = useState('');
@@ -48,6 +53,7 @@ export default function PatientBasicScreen () {
     const [cui, setCui] = useState('');
     const [fechaNacimiento, setFechaNacimiento] = useState('');
     const [sexo, setSexo] = useState('');
+    const [buscador, setBuscador] = useState('');
 
     useEffect(loadTableData, []);
 
@@ -72,6 +78,14 @@ export default function PatientBasicScreen () {
             cui={cui}
             fechaNacimiento={fechaNacimiento}
             sexo={sexo}
+        />
+        <Searcher 
+            placeHolder='Nombre o CUI de paciente'
+
+            param={buscador}
+            setParam={setBuscador}
+
+            searchFn={buscarData}
         />
         <DataTable headers={tableColumns} rows={tableData} />
     </div>
