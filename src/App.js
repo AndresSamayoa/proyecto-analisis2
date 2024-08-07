@@ -1,7 +1,5 @@
 import './App.css';
 
-import PatientForm from './components/PatientForm/PatientForm';
-
 function App() {
   return (
     <div className="App">
@@ -18,7 +16,6 @@ function App() {
           Learn React
         </a>
       </header>
-      <PatientForm />
     </div>
   );
 }

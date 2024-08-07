@@ -80,7 +80,5 @@
 .controlLabel {
     width: auto;
     color: rgba(0, 0, 0, 1);
-    font-family: Inter;
-    font-weight: Regular;
     font-size: 16px;
 }
