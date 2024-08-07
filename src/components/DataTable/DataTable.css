@@ -18,7 +18,10 @@
 }
 
 .dTableHeaderItems {
-    position: sticky;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     word-wrap: break-word;
     border: solid;
     border-width: 1px;
