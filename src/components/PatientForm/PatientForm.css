@@ -1,7 +1,7 @@
 .patientForm {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 75%;
     padding-bottom: 1%;
 }
 
@@ -10,7 +10,6 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
     width: 100%;
-    background: rgba(234, 251, 204, 1);
     opacity: 1;
     padding: 1% 0;
 }
