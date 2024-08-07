@@ -1,4 +1,5 @@
 import './PatientBasicScreen.css'
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import { useState, useEffect } from 'react';
 
