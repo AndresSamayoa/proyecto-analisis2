@@ -13,6 +13,7 @@ export default function Header () {
         <div className='headerLinks'>
             <Link to='/patient/basic/crud' className='headerLink'>Pacientes</Link>
             <Link to='/user/basic/crud' className='headerLink'>Usuarios</Link>
+            <Link to='/date/crud' className='headerLink'>Citas</Link>
         </div>
     </div>
 }
