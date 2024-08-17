@@ -56,7 +56,7 @@ export default function DateForm(props) {
             <div className="controlContainer">
                 <span className="controlLabel">Fecha</span>
                 <div className="inputSecundaryContainer">
-                    <input className="dateInput" type="date" value={props.fecha} onChange={setFecha}/>
+                    <input className="dateInput" type="datetime-local" value={props.fecha} onChange={setFecha}/>
                 </div>
             </div>
             <div className="controlContainer">
