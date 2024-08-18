@@ -6,6 +6,7 @@ import Header from './components/Header/Header';
 import PatientBasicScreen from './screens/PatientBasic/PatientBasicScreen';
 import UserBasicScreen from './screens/UserBasicScreen/UserBasicScreen';
 import DateScreen from './screens/DateScreen/DateScreen';
+import MedicalServices from './screens/MedicalServicesScreen/MedicalServicesScreen';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path='/patient/basic/crud' element={<PatientBasicScreen />}/>
         <Route path='/user/basic/crud' element={<UserBasicScreen />}/>
         <Route path='/date/crud' element={<DateScreen />}/>
+        <Route path='/medicalServices/crud' element={<MedicalServices />}/>
       </Routes>
     </>
   );
