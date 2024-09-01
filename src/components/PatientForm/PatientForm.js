@@ -1,24 +1,26 @@
 import './PatientForm.css';
 
+import moment from 'moment';
+
 export default function PatientForm(props) {
 
     const setNombres = (e) => {
         props.setNombres(e.target.value)
     };
+    const setApellidos = (e) => {
+        props.setApellidos(e.target.value)
+    };
     const setEmail = (e) => {
         props.setEmail(e.target.value)
     };
     const setTelefono = (e) => {
-        props.setTelefono(e.target.value)
+        props.setTelefono(e.target.value ? e.target.value.replace(/[^0-9]/gm,'') : e.target.value)
     };
     const setCui = (e) => {
-        props.setCui(e.target.value)
+        props.setCui(e.target.value ? e.target.value.replace(/[^0-9]/gm,'') : e.target.value)
     };
     const setFechaNacimiento = (e) => {
         props.setFechaNacimiento(e.target.value)
-    };
-    const setSexo = (e) => {
-        props.setSexo(e.target.value)
     };
 
     return <div className='patientForm'>
@@ -30,30 +32,36 @@ export default function PatientForm(props) {
                 </div>
             </div>
             <div className="controlContainer">
+                <span className="controlLabel">Apellido</span>
+                <div className="inputSecundaryContainer">
+                    <input className="textInput" value={props.apellidos} onChange={setApellidos}/>
+                </div>
+            </div>
+            <div className="controlContainer">
                 <span className="controlLabel">Telefono</span>
                 <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" value={props.telefono} onChange={setTelefono}/>
+                    <input type="text" className="textInput" maxLength={8} value={props.telefono} onChange={setTelefono}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Email</span>
                 <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" value={props.email} onChange={setEmail}/>
+                    <input type="email" className="textInput" value={props.email} onChange={setEmail}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">CUI</span>
                 <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" value={props.cui} onChange={setCui}/>
+                    <input type="text" className="textInput" maxLength={13} value={props.cui} onChange={setCui}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha de nacimiento</span>
                 <div className="inputSecundaryContainer">
-                    <input className="dateInput" type="date" value={props.fechaNacimiento} onChange={setFechaNacimiento}/>
+                    <input className="dateInput" type="date" max={moment().format('YYYY-MM-DD')} value={props.fechaNacimiento} onChange={setFechaNacimiento}/>
                 </div>
             </div>
-            <div className="controlContainer">
+            {/* <div className="controlContainer">
                 <span className="controlLabel">Sexo</span>
                 <div className="inputSecundaryContainer">
                     <select className="comboBoxInput" value={props.sexo} onChange={setSexo}>
@@ -62,7 +70,10 @@ export default function PatientForm(props) {
                         <option>F</option>
                     </select>
                 </div>
-            </div>
+            </div> */}
+        </div>
+        <div className='messageContainer'>
+                <p>{props.mensaje}</p>
         </div>
         <div className="patientFormControls">
             <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>

@@ -9,6 +9,7 @@
 .dTableHeader {
     display: flex;
     flex-direction: row;
+    min-width: 100%;
     width: fit-content;
     background-color: #3F82DB;
     color: #000000;
@@ -43,6 +44,7 @@
 .dTableRows {
     display: flex;
     flex-direction: row;
+    min-width: 100%;
     width: fit-content;
     color: #000000;
     padding: 0;
@@ -50,6 +52,7 @@
 
 .dTableRowItems {
     word-wrap: break-word;
+    text-align: center;
     border: solid;
     min-width: 100px;
     max-width: 500px;

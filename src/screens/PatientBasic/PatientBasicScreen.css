@@ -13,3 +13,14 @@
     flex-direction: row;
     justify-content: start;
 }
+
+.ActionContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.ActionItem {
+    cursor: pointer;
+}
