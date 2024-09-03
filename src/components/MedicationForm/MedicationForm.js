@@ -6,12 +6,8 @@ export default function MedicationForm(props) {
         props.setNombre(e.target.value)
     };
 
-    const setComentario = (e) => {
-        props.setComentario(e.target.value)
-    };
-
-    const setActivo = (e) => {
-        props.setActivo(e.target.checked)
+    const setDescripcion = (e) => {
+        props.setDescripcion(e.target.value)
     };
 
     return <div className='medicationForm'>
@@ -22,18 +18,15 @@ export default function MedicationForm(props) {
                     <input type="text" className="textInput" value={props.nombre} onChange={setNombre}/>
                 </div>
             </div>
-            <div className="controlContainer">
-                <span className="controlLabel">Activo</span>
-                <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkboxInput" checked={props.activo} onChange={setActivo}/>
-                </div>
-            </div>
             <div className="controlContainerWide">
-                <span className="controlLabel">Comentarios</span>
+                <span className="controlLabel">Descripcion</span>
                 <div className="inputSecundaryContainer">
-                    <textarea type="text" className="textFieldInput" value={props.comentario} onChange={setComentario}/>
+                    <textarea type="text" className="textFieldInput" value={props.descripcion} onChange={setDescripcion}/>
                 </div>
             </div>
+        </div>
+        <div className='messageContainer'>
+                <p>{props.mensaje}</p>
         </div>
         <div className="medicationFormControls">
             <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>

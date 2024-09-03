@@ -1,4 +1,4 @@
-import './UserBasicScreen.css'
+import './MedicBasicScreen.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import { useState, useEffect } from 'react';
@@ -60,7 +60,7 @@ export default function UserBasicScreen () {
 
     return <div className="UserBasicScreen">
         <div className="TitleContainer">
-            <h1>Usuarios</h1>
+            <h1>Medicos</h1>
         </div>
         <UserForm 
             cancelarFn={cancelarForm}

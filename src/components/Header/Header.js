@@ -12,7 +12,7 @@ export default function Header () {
         </div>
         <div className='headerLinks'>
             <Link to='/patient/basic/crud' className='headerLink'><b>Pacientes</b></Link>
-            <Link to='/user/basic/crud' className='headerLink'><b>Usuarios</b></Link>
+            <Link to='/medic/basic/crud' className='headerLink'><b>Medicos</b></Link>
             <Link to='/date/crud' className='headerLink'><b>Citas</b></Link>
             <Link to='/medicalServices/crud' className='headerLink'><b>Servicios Medicos</b></Link>
             <Link to='/workShifts/crud' className='headerLink'><b>Turnos</b></Link>

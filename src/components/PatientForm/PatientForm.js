@@ -52,7 +52,7 @@ export default function PatientForm(props) {
             <div className="controlContainer">
                 <span className="controlLabel">CUI</span>
                 <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" maxLength={13} value={props.cui} onChange={setCui}/>
+                    <input type="text" className="textInput" disabled={props.pacienteId > 0} maxLength={13} value={props.cui} onChange={setCui}/>
                 </div>
             </div>
             <div className="controlContainer">

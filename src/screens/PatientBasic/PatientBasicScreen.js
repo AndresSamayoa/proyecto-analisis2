@@ -32,20 +32,103 @@ export default function PatientBasicScreen () {
         setCui('')
         setFechaNacimiento('')
         setSexo('')
+        setMensaje('')
     };
     
-    const guardarForm = () => {
-        console.log(nombres,email,telefono,cui,fechaNacimiento,sexo);
+    const guardarForm = async () => {
+        try {
+            const errores = [];
+            let method;
+            let url;
+
+            if (pacienteId > 0) {
+                method = 'PUT';
+                url = base_url + '/Pacientes/Update'
+            } else {
+                method = 'POST';
+                url = base_url + '/Pacientes/Create'
+            }
+
+            if (!nombres || nombres.trim().length < 1) {
+                errores.push('El nombre es un campo obligatorio.');
+            }
+            if (!apellidos || apellidos.trim().length < 1) {
+                errores.push('El apellido es un campo obligatorio.');
+            }
+            if (!cui || cui.trim().length != 13) {
+                errores.push('El cui es un campo obligatorio y debe ser de 13 caracteres.');
+            }
+            console.log(typeof telefono)
+            if (!telefono || telefono.trim().length != 8) {
+                errores.push('El telefono es un campo obligatorio y debe ser de 8 caracteres.');
+            }
+            if (!fechaNacimiento) {
+                errores.push('La fecha de nacimiento es un campo obligatorio.');
+            }
+            if (!email || !(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email))) {
+                errores.push('El email debe tener un formato valido (xxx@xx.xx).');
+            }
+
+            if (errores.length > 0) {
+                let mensajeError = errores.join(' ');
+                setMensaje(mensajeError)
+                return ;
+            }
+
+            const response = await axios({
+                url,
+                method,
+                data: {
+                    paC_id: pacienteId ? pacienteId : 0,
+                    paC_nombre: nombres.trim(),
+                    paC_apellido: apellidos.trim(),
+                    paC_CUI: cui.trim(),
+                    paC_fecha_nacimiento: fechaNacimiento,
+                    paC_numero_telefonico: telefono.trim(),
+                    paC_correo_electronico: email.trim().toLowerCase()
+                },
+                validateStatus: () => true
+            });
+
+            if (response.status == 200) {
+                cancelarForm();
+                setMensaje('Exito al guardar');
+                await loadTableData();
+            } else {
+                setMensaje('Error al guardar, codigo: ' + response.status);
+            }
+        } catch (error) {
+            setMensaje('Error al guardar los datos: ' + error.message);
+        }
     };
 
-    const eliminarItem = (clienteId) => {
-        console.log(clienteId)
+    const eliminarItem = async (clienteId) => {
+        try {
+            const response = await axios({
+                url: base_url + '/Pacientes/Delete',
+                method: 'DELETE',
+                params: {
+                    Id: clienteId
+                },
+                validateStatus: () => true
+            });
+
+            if (response.status == 200) {
+                cancelarForm();
+                setMensaje('Exito al guardar');
+                await loadTableData();
+            } else {
+                setMensaje('Error al eliminar, codigo: ' + response.status);
+            }
+        } catch (error) {
+            setMensaje('Error al eliminar el cliente: ' + error.message);
+        }
     };
 
     const loadTableData = async () => {
         try {
             const response = await axios({
-                url: base_url+'/api/CLI_PACIENTES',
+                url: base_url+'/Pacientes',
                 method: 'GET',
                 validateStatus: () => true,
                 timeout: 30000
@@ -61,8 +144,8 @@ export default function PatientBasicScreen () {
                         apellidos: patient.paC_apellido,
                         cui: patient.paC_CUI,
                         fecha_nacimiento: patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('DD-MM-YYYY') : '',
-                        edad: patient.paC_fecha_nacimiento ? moment().diff(moment(patient.paC_fecha_nacimiento), 'years') : '',
-                        telefono: patient.paC_numero_telefonico,
+                        edad: patient.paC_fecha_nacimiento ? moment().diff(moment(patient.paC_fecha_nacimiento), 'years').toString() : '',
+                        telefono: String(patient.paC_numero_telefonico),
                         email: patient.paC_correo_electronico,
                         acciones: <div className='ActionContainer'>
                             <i 
@@ -71,7 +154,7 @@ export default function PatientBasicScreen () {
                                     setNombres(patient.paC_nombre);
                                     setApellidos(patient.paC_apellido);
                                     setEmail(patient.paC_correo_electronico);
-                                    setTelefono(patient.paC_numero_telefonico);
+                                    setTelefono(String(patient.paC_numero_telefonico));
                                     setCui(patient.paC_CUI);
                                     setFechaNacimiento(patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('YYYY-MM-DD') : '');
                                 }} 
@@ -95,8 +178,60 @@ export default function PatientBasicScreen () {
         }
     };
 
-    const buscarData = () => {
-        console.log(buscador)
+    const buscarData = async () => {
+        try {
+            const response = await axios({
+                url: base_url+'/Pacientes/fas_buscar_pacientes',
+                method: 'GET',
+                params: {
+                    buscar: buscador
+                },
+                validateStatus: () => true,
+                timeout: 30000
+            });
+
+            if (response.status == 200) {
+                const data = [];
+                for (const patient of response.data) {
+                    data.push({
+                        id: patient.paC_id,
+                        nombresCompletos: patient.paC_nombre + ' ' + patient.paC_apellido,
+                        nombres: patient.paC_nombre,
+                        apellidos: patient.paC_apellido,
+                        cui: patient.paC_CUI,
+                        fecha_nacimiento: patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('DD-MM-YYYY') : '',
+                        edad: patient.paC_fecha_nacimiento ? moment().diff(moment(patient.paC_fecha_nacimiento), 'years').toString() : '',
+                        telefono: String(patient.paC_numero_telefonico),
+                        email: patient.paC_correo_electronico,
+                        acciones: <div className='ActionContainer'>
+                            <i 
+                                onClick={()=>{
+                                    setPacienteId(patient.paC_id);
+                                    setNombres(patient.paC_nombre);
+                                    setApellidos(patient.paC_apellido);
+                                    setEmail(patient.paC_correo_electronico);
+                                    setTelefono(String(patient.paC_numero_telefonico));
+                                    setCui(patient.paC_CUI);
+                                    setFechaNacimiento(patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('YYYY-MM-DD') : '');
+                                }} 
+                                class="bi bi-pencil-square ActionItem"
+                            ></i>
+                            <i
+                                onClick={()=>eliminarItem(patient.paC_id)} 
+                                style={{color:"red"}} 
+                                class="bi bi-trash ActionItem"
+                            ></i>
+                        </div>
+                    });
+                }
+
+                setTableData(data);
+            } else {
+                setMensaje('Error al buscar los datos de la tabla, codigo: ' + response.status);
+            }
+        } catch (error) {
+            setMensaje('Error al buscar los datos de la tabla: ' + error.message);
+        }
     }
 
     const [tableData, setTableData] = useState([]);
@@ -129,6 +264,7 @@ export default function PatientBasicScreen () {
             setFechaNacimiento={setFechaNacimiento}
             setSexo={setSexo}
 
+            pacienteId={pacienteId}
             nombres={nombres}
             apellidos={apellidos}
             email={email}
@@ -145,6 +281,7 @@ export default function PatientBasicScreen () {
             setParam={setBuscador}
 
             searchFn={buscarData}
+            cancelFn={loadTableData}
         />
         <DataTable headers={tableColumns} rows={tableData} />
     </div>

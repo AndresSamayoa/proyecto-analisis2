@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import Header from './components/Header/Header';
 import PatientBasicScreen from './screens/PatientBasic/PatientBasicScreen';
-import UserBasicScreen from './screens/UserBasicScreen/UserBasicScreen';
+import MedicBasicScreen from './screens/MedicBasicScreen/MedicBasicScreen';
 import DateScreen from './screens/DateScreen/DateScreen';
 import MedicalServices from './screens/MedicalServicesScreen/MedicalServicesScreen';
 import WorkShiftScreen from './screens/WorkShiftScreen/WorkShiftScreen';
@@ -16,7 +16,7 @@ function App() {
       <Header />
       <Routes>
         <Route path='/patient/basic/crud' element={<PatientBasicScreen />}/>
-        <Route path='/user/basic/crud' element={<UserBasicScreen />}/>
+        <Route path='/medic/basic/crud' element={<MedicBasicScreen />}/>
         <Route path='/date/crud' element={<DateScreen />}/>
         <Route path='/medicalServices/crud' element={<MedicalServices />}/>
         <Route path='/workShifts/crud' element={<WorkShiftScreen />}/>
