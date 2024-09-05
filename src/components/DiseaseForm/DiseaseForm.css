@@ -1,0 +1,128 @@
+.diseaseForm {
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    padding-bottom: 1%;
+}
+
+.diseaseInputs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    width: 100%;
+    opacity: 1;
+    padding: 1% 0;
+}
+
+.diseaseControls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    background: rgba(234, 251, 204, 1);
+    opacity: 1;
+    padding: 1% 0;
+}
+
+.guardarBtn {
+    margin: 0 1%;
+    padding: 4px 1%;
+    background-color: #79DFDF;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.cancelarBtn {
+    margin: 0 1%;
+    padding: 4px 1%;
+    background-color: #A7CACA;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.controlContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 1%;
+    width: 30%;
+}
+
+.controlContainerWide {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 1%;
+    width: 100%;
+}
+
+.inputSecundaryContainer {
+    width: 100%;
+}
+
+.inputLabelContainerSecundaryContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+}
+
+.openModal {
+    margin-left: 1%;
+    cursor: pointer;
+}
+
+.textInput {
+    background-color: white;
+    width: 100%;
+    height: 24px;
+    border: 0;
+    border-radius: 4px;
+}
+
+.textFieldInput {
+    background-color: white;
+    width: 100%;
+    height: 96px;
+    resize: none;
+    border: 0;
+    border-radius: 4px;
+}
+
+.diseaseInput {
+    background-color: white;
+    width: 100%;
+    height: 24px;
+    border: 0;
+    border-radius: 4px;
+}
+
+.comboBoxInput {
+    background-color: white;
+    width: 100%;
+    height: 24px;
+    border: 0;
+    border-radius: 4px;
+}
+
+.controlLabel {
+    width: auto;
+    color: rgba(0, 0, 0, 1);
+    font-size: 16px;
+}
+
+.diseaseFormControls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    background: rgba(234, 251, 204, 1);
+    opacity: 1;
+    padding: 1% 0;
+}
+
+.messageContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

@@ -9,6 +9,7 @@ import DateScreen from './screens/DateScreen/DateScreen';
 import MedicalServices from './screens/MedicalServicesScreen/MedicalServicesScreen';
 import WorkShiftScreen from './screens/WorkShiftScreen/WorkShiftScreen';
 import MedicationScreen from './screens/MedicationScreen/MedicationScreen';
+import DiseaseScreen from './screens/DiseaseScreen/DiseaseScreen';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path='/medicalServices/crud' element={<MedicalServices />}/>
         <Route path='/workShifts/crud' element={<WorkShiftScreen />}/>
         <Route path='/medications/crud' element={<MedicationScreen />}/>
+        <Route path='/diseases/crud' element={<DiseaseScreen />}/>
       </Routes>
     </>
   );
