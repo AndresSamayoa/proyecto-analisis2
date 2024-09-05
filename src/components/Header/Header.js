@@ -14,7 +14,7 @@ export default function Header () {
             <Link to='/patient/basic/crud' className='headerLink'><b>Pacientes</b></Link>
             <Link to='/medic/basic/crud' className='headerLink'><b>Medicos</b></Link>
             <Link to='/date/crud' className='headerLink'><b>Citas</b></Link>
-            <Link to='/medicalServices/crud' className='headerLink'><b>Servicios Medicos</b></Link>
+            {/* <Link to='/medicalServices/crud' className='headerLink'><b>Servicios Medicos</b></Link> */}
             <Link to='/workShifts/crud' className='headerLink'><b>Turnos</b></Link>
             <Link to='/medications/crud' className='headerLink'><b>Medicinas</b></Link>
             <Link to='/diseases/crud' className='headerLink'><b>Enfermedades</b></Link>

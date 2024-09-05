@@ -1,11 +1,11 @@
-.userForm {
+.medicBasicForm {
     display: flex;
     flex-direction: column;
     width: 75%;
     padding-bottom: 1%;
 }
 
-.userInputs {
+.medicBasicInputs {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
@@ -14,7 +14,7 @@
     padding: 1% 0;
 }
 
-.userFormControls {
+.medicBasicFormControls {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -80,4 +80,10 @@
     width: auto;
     color: rgba(0, 0, 0, 1);
     font-size: 16px;
+}
+
+.messageContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
