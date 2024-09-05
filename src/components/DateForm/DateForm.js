@@ -1,23 +1,20 @@
 import './DateForm.css';
 
 import ComboboxSearch from '../ComboboxSearch/ComboboxSearch';
+import moment from 'moment';
 
 export default function DateForm(props) {
 
-    const setAtendida = (e) => {
-        props.setAtendida(e.target.checked)
+    const setEstado = (e) => {
+        props.setEstado(e.target.checked)
     };
 
     const setFecha = (e) => {
         props.setFecha(e.target.value)
     };
 
-    const setRazon = (e) => {
-        props.setRazon(e.target.value)
-    };
-
-    const setDuracion = (e) => {
-        props.setDuracion(e.target.value)
+    const setHora = (e) => {
+        props.setHora(e.target.value ? e.target.value.replace(/[^0-9]/gm,'') : e.target.value)
     };
 
     return <div className='dateForm'>
@@ -48,29 +45,26 @@ export default function DateForm(props) {
                 </div>
             </div>
             <div className="controlContainer">
-                <span className="controlLabel">Atendida</span>
+                <span className="controlLabel">Estado</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkBoxInput" value={props.atendida} onChange={setAtendida}/>
+                    <input type="checkbox" className="checkBoxInput" checked={props.estado} onChange={setEstado}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha</span>
                 <div className="inputSecundaryContainer">
-                    <input className="dateInput" type="datetime-local" value={props.fecha} onChange={setFecha}/>
+                    <input className="dateInput" type="date" min={moment().add(1,'day').format('YYYY-MM-DD')} value={props.fecha} onChange={setFecha}/>
                 </div>
             </div>
             <div className="controlContainer">
-                <span className="controlLabel">Razon</span>
+                <span className="controlLabel">Hora</span>
                 <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" value={props.razon} onChange={setRazon}/>
+                    <input type="text" className="textInput" value={props.hora} onChange={setHora}/>
                 </div>
             </div>
-            <div className="controlContainer">
-                <span className="controlLabel">Duracion</span>
-                <div className="inputSecundaryContainer">
-                    <input type="number" className="textInput" value={props.duracion} onChange={setDuracion}/>
-                </div>
-            </div>
+        </div>
+        <div className='messageContainer'>
+                <p>{props.mensaje}</p>
         </div>
         <div className="dateFormControls">
             <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>

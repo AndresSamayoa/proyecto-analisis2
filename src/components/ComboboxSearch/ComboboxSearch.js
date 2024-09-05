@@ -4,10 +4,11 @@ import { useState } from 'react';
 
 export default function ComboboxSearch (props) {
 
-    const [isOpen, setIsOpen] = useState(false); 
+    const [isOpen, setIsOpen] = useState(false);
 
     const changeSearcher = (e) => {
-        props.setSearcher(e.target.value)
+        props.setSearcher(e.target.value);
+        props.setValue(0);
     }
 
     return <div className="chbxSearcher">
@@ -16,7 +17,6 @@ export default function ComboboxSearch (props) {
             value={props.searcher}
             onChange={changeSearcher}
             onFocus={()=>setIsOpen(true)}
-            onBlur={()=>setIsOpen(false)}
         />
         <div>
         {
@@ -27,7 +27,11 @@ export default function ComboboxSearch (props) {
                         <div 
                             className="chbxSearcherElement"
                             key={`${element.label}-${element.value}`}
-                            onClick={()=>{props.setValue(element.value)}}
+                            onClick={()=>{
+                                props.setValue(element.value);
+                                props.setSearcher(element.label);
+                                setIsOpen(false);
+                            }}
                         >
                             {element.label}
                         </div>
