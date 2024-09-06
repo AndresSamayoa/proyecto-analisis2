@@ -1,15 +1,17 @@
 import './WorkShiftForm.css';
 
+import moment from 'moment';
+
 import ComboboxSearch from '../ComboboxSearch/ComboboxSearch';
 
 export default function WorkShiftForm(props) {
 
     const setHoraInicio = (e) => {
-        props.setHoraInicio(e.target.value)
+        props.setHoraInicio(e.target.value ? e.target.value.replace(/[^0-9]/gm,'') : e.target.value)
     };
 
     const setHoraFin = (e) => {
-        props.setHoraFin(e.target.value)
+        props.setHoraFin(e.target.value ? e.target.value.replace(/[^0-9]/gm,'') : e.target.value)
     };
 
     const setFechaInicio = (e) => {
@@ -18,6 +20,10 @@ export default function WorkShiftForm(props) {
 
     const setFechaFin = (e) => {
         props.setFechaFin(e.target.value)
+    };
+
+    const setDisponible = (e) => {
+        props.setDisponible(e.target.checked)
     };
 
     const setLunes = (e) => {
@@ -64,69 +70,78 @@ export default function WorkShiftForm(props) {
             <div className="controlContainer">
                 <span className="controlLabel">Hora de inicio (0-24)</span>
                 <div className="inputSecundaryContainer">
-                    <input type="number" className="textInput" value={props.horaInicio} onChange={setHoraInicio}/>
+                    <input type="text" className="textInput" value={props.horaInicio} onChange={setHoraInicio}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Hora de fin (0-24)</span>
                 <div className="inputSecundaryContainer">
-                    <input type="number" className="textInput" value={props.horaFin} onChange={setHoraFin}/>
+                    <input type="text" className="textInput" value={props.horaFin} onChange={setHoraFin}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha de inicio</span>
                 <div className="inputSecundaryContainer">
-                    <input type="date" className="dateInput" value={props.fechaInicio} onChange={setFechaInicio}/>
+                    <input type="date" className="dateInput" min={moment().add(1,'day').format('YYYY-MM-DD')} value={props.fechaInicio} onChange={setFechaInicio}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha de fin</span>
                 <div className="inputSecundaryContainer">
-                    <input type="date" className="dateInput" value={props.fechaFom} onChange={setFechaFin}/>
+                    <input type="date" className="dateInput" min={moment().add(1,'day').format('YYYY-MM-DD')} value={props.fechaFin} onChange={setFechaFin}/>
+                </div>
+            </div>
+            <div className="controlContainer">
+                <span className="controlLabel">Disponible</span>
+                <div className="inputSecundaryContainer">
+                    <input type="checkbox" className="checkboxInput" checked={props.disponible} onChange={setDisponible}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Lunes</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkboxInput" value={props.lunes} onChange={setLunes}/>
+                    <input type="checkbox" className="checkboxInput" checked={props.lunes} onChange={setLunes}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Martes</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkboxInput" value={props.martes} onChange={setMartes}/>
+                    <input type="checkbox" className="checkboxInput" checked={props.martes} onChange={setMartes}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Miercoles</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkboxInput" value={props.miercoles} onChange={setMiercoles}/>
+                    <input type="checkbox" className="checkboxInput" checked={props.miercoles} onChange={setMiercoles}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Jueves</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkboxInput" value={props.jueves} onChange={setJueves}/>
+                    <input type="checkbox" className="checkboxInput" checked={props.jueves} onChange={setJueves}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Viernes</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkboxInput" value={props.lunes} onChange={setViernes}/>
+                    <input type="checkbox" className="checkboxInput" checked={props.viernes} onChange={setViernes}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Sabado</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkboxInput" value={props.sabado} onChange={setSabado}/>
+                    <input type="checkbox" className="checkboxInput" checked={props.sabado} onChange={setSabado}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Domingo</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkboxInput" value={props.domingo} onChange={setDomingo}/>
+                    <input type="checkbox" className="checkboxInput" checked={props.domingo} onChange={setDomingo}/>
                 </div>
             </div>
+        </div>
+        <div className='messageContainer'>
+                <p>{props.mensaje}</p>
         </div>
         <div className="workShiftFormControls">
             <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>
