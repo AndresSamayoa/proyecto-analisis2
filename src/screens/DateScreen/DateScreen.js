@@ -147,6 +147,7 @@ export default function DateScreen () {
         setEstado(true);
         setFecha('');
         setHora('');
+        setMensaje('');
     };
     
     const guardarForm = async () => {
@@ -261,7 +262,7 @@ export default function DateScreen () {
                                     setBuscadorMedico(date.meD_id);
                                     setMedico(date.meD_id);
                                     setEstado(date.ciT_estado);
-                                    setFecha(date.ciT_fecha ? moment(date.ciT_fecha).format('DD-MM-YYYY') : '');
+                                    setFecha(date.ciT_fecha ? moment(date.ciT_fecha).format('YYYY-MM-DD') : '');
                                     setHora(String(date.ciT_hora));
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
@@ -289,7 +290,7 @@ export default function DateScreen () {
     const buscarData = async () => {
         try {
             const response = await axios({
-                url: base_url+'/CITAS/buscar_citas',
+                url: base_url+'/CITAS/fas_buscar_citas',
                 method: 'GET',
                 params: {
                     buscar: buscador
@@ -317,7 +318,7 @@ export default function DateScreen () {
                                     setBuscadorMedico(date.meD_id);
                                     setMedico(date.meD_id);
                                     setEstado(date.ciT_estado);
-                                    setFecha(date.ciT_fecha ? moment(date.ciT_fecha).format('DD-MM-YYYY') : '');
+                                    setFecha(date.ciT_fecha ? moment(date.ciT_fecha).format('YYYY-MM-DD') : '');
                                     setHora(String(date.ciT_hora));
                                 }} 
                                 class="bi bi-pencil-square ActionItem"

@@ -28,6 +28,7 @@ export default function UserBasicScreen () {
         setEmail('');
         setTelefono('');
         setTipo('');
+        setMensaje('');
         setNumeroColegiado('');
     };
     
@@ -111,7 +112,7 @@ export default function UserBasicScreen () {
 
             if (response.status == 200) {
                 cancelarForm();
-                setMensaje('Exito al guardar');
+                setMensaje('Exito al eliminar');
                 await loadTableData();
             } else {
                 setMensaje('Error al eliminar, codigo: ' + response.status);
