@@ -7,8 +7,7 @@ import moment from 'moment';
 
 import DateForm from '../../components/DateForm/DateForm';
 import PatientBasicScreen from '../PatientBasic/PatientBasicScreen';
-import DataTable from '../../components/DataTable/DataTable';
-import Searcher from '../../components/Searcher/Searcher'
+import TableModal from '../../components/TableModal/TableModal';
 
 const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
@@ -62,60 +61,6 @@ export default function DateScreen () {
                 params: {
                     buscar: param
                 },
-                validateStatus: () => true,
-                timeout: 30000
-            });
-
-            if (response.status === 200) {
-                const data = [];
-                for (const patient of response.data) {
-                    data.push({
-                        value: patient.meD_id,
-                        label: patient.meD_nombre + ' ' + patient.meD_apellido,
-                    });
-                }
-
-                setListaMedicos(data);
-            } else {
-                setMensaje('Error al obtener los datos de clientes, codigo: ' + response.status);
-            }
-        } catch (error) {
-            setMensaje('Error al obtener los datos de clientes: ' + error.message);
-        }
-    }
-
-    const listPatients = async () => {
-        try {
-            const response = await axios({
-                url: base_url+'/Pacientes',
-                method: 'GET',
-                validateStatus: () => true,
-                timeout: 30000
-            });
-
-            if (response.status === 200) {
-                const data = [];
-                for (const patient of response.data) {
-                    data.push({
-                        value: patient.paC_id,
-                        label: patient.paC_nombre + ' ' + patient.paC_apellido,
-                    });
-                }
-
-                setListaPaciente(data);
-            } else {
-                setMensaje('Error al obtener los datos de clientes, codigo: ' + response.status);
-            }
-        } catch (error) {
-            setMensaje('Error al obtener los datos de clientes: ' + error.message);
-        }
-    }
-
-    const listMedics = async () => {
-        try {
-            const response = await axios({
-                url: base_url+'/Medicos/Read',
-                method: 'GET',
                 validateStatus: () => true,
                 timeout: 30000
             });
@@ -202,7 +147,6 @@ export default function DateScreen () {
             if (response.status == 200) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
-                await loadTableData();
             } else {
                 setMensaje('Error al guardar, codigo: ' + response.status);
             }
@@ -211,7 +155,7 @@ export default function DateScreen () {
         }
     };
 
-    const eliminarItem = async (citaId) => {
+    const eliminarItem = async (citaId, buscador, setMensajeParam) => {
         try {
             const response = await axios({
                 url: base_url + '/CITAS/Delete',
@@ -224,70 +168,17 @@ export default function DateScreen () {
 
             if (response.status == 200) {
                 cancelarForm();
-                setMensaje('Exito al eliminar');
-                await loadTableData();
+                setMensajeParam('Exito al eliminar');
+                buscarData(buscador, setMensajeParam);
             } else {
-                setMensaje('Error al eliminar, codigo: ' + response.status);
+                setMensajeParam('Error al eliminar, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al eliminar la cita: ' + error.message);
+            setMensajeParam('Error al eliminar la cita: ' + error.message);
         }
     };
 
-    const loadTableData = async () => {
-        try {
-            const response = await axios({
-                url: base_url+'/CITAS',
-                method: 'GET',
-                validateStatus: () => true,
-                timeout: 30000
-            });
-
-            if (response.status == 200) {
-                const data = [];
-                for (const date of response.data) {
-                    data.push({
-                        id: date.ciT_id,
-                        nombres_paciente: date.paC_id,
-                        nombres_medico: date.meD_id,
-                        fecha_cita: date.ciT_fecha ? moment(date.ciT_fecha).format('DD-MM-YYYY') : '',
-                        hora_cita: String(date.ciT_hora),
-                        estado: date.ciT_estado ? 'Activo' : 'Inactivo',
-                        acciones: <div className='ActionContainer'>
-                            <i 
-                                onClick={()=>{
-                                    setCitaId(date.ciT_id);
-                                    setBuscadorPaciente(date.paC_id);
-                                    setPaciente(date.paC_id);
-                                    setBuscadorMedico(date.meD_id);
-                                    setMedico(date.meD_id);
-                                    setEstado(date.ciT_estado);
-                                    setFecha(date.ciT_fecha ? moment(date.ciT_fecha).format('YYYY-MM-DD') : '');
-                                    setHora(String(date.ciT_hora));
-                                }} 
-                                class="bi bi-pencil-square ActionItem"
-                            ></i>
-                            <i
-                                onClick={()=>eliminarItem(date.ciT_id)} 
-                                style={{color:"red"}} 
-                                class="bi bi-trash ActionItem"
-                            ></i>
-                        </div>
-                    });
-                }
-
-                setTableData(data);
-                listPatients();
-                listMedics();
-            } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
-            }
-        } catch (error) {
-            setMensaje('Error al obtener los datos de la tabla: ' + error.message);
-        }
-    };
-
-    const buscarData = async () => {
+    const buscarData = async (buscador, setMensajeParam) => {
         try {
             const response = await axios({
                 url: base_url+'/CITAS/fas_buscar_citas',
@@ -320,11 +211,12 @@ export default function DateScreen () {
                                     setEstado(date.ciT_estado);
                                     setFecha(date.ciT_fecha ? moment(date.ciT_fecha).format('YYYY-MM-DD') : '');
                                     setHora(String(date.ciT_hora));
+                                    setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(date.ciT_id)} 
+                                onClick={()=>eliminarItem(date.ciT_id, buscador, setMensajeParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -334,20 +226,24 @@ export default function DateScreen () {
 
                 setTableData(data);
             } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
+                setMensajeParam('Error al obtener los datos de la tabla, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al obtener los datos de la tabla: ' + error.message);
+            setMensajeParam('Error al obtener los datos de la tabla: ' + error.message);
         }
     }
 
-    const abrirModal = () => {
-        setIsModelOpen(true);
+    const abrirModalPacientes = () => {
+        setIsPacientesModalOpen(true);
+        console.log(isPacientesModalOpen);
     }
 
-    const cerrarModal = () => {
-        setIsModelOpen(false);
-        loadTableData();
+    const cerrarModalPacientes = () => {
+        setIsPacientesModalOpen(false);
+    }
+    
+    const cerrarModalTabla = () => {
+        setIsTableModalOpen(false);
     }
 
     const [tableData, setTableData] = useState([]);
@@ -361,21 +257,13 @@ export default function DateScreen () {
     const [estado, setEstado] = useState(true);
     const [fecha, setFecha] = useState('');
     const [hora, setHora] = useState('');
-    const [isModalOpen, setIsModelOpen] = useState(false);
-    const [buscador, setBuscador] = useState('');
+    const [isPacientesModalOpen, setIsPacientesModalOpen] = useState(false);
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     const [mensaje, setMensaje] = useState('');
-    
-    useEffect(()=> {
-        loadTableData();
-        }, 
-        []
-    );
     
     useEffect(()=> {
         if (buscadorMedico.length > 0) {
             searchMedics(buscadorMedico);
-        } else {
-            listMedics()
         }
         }, 
         [buscadorMedico]
@@ -384,8 +272,6 @@ export default function DateScreen () {
     useEffect(()=> {
         if (buscadorPaciente.length > 0) {
             searchPatients(buscadorPaciente);   
-        } else {
-            listPatients()
         }
         }, 
         [buscadorPaciente]
@@ -394,11 +280,12 @@ export default function DateScreen () {
     return <div className='DateBasicScreen'>
         <div className="TitleContainer">
             <h1>Citas</h1>
+            <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>
         </div>
         <DateForm 
             cancelarFn={cancelarForm}
             guardarFn={guardarForm}
-            abrirModal={abrirModal}
+            abrirModal={abrirModalPacientes}
 
             buscadorMedico={buscadorMedico}
             listaMedicos={listaMedicos}
@@ -417,30 +304,38 @@ export default function DateScreen () {
             setFecha={setFecha}
             setHora={setHora}
         />
-        <Searcher 
-            placeHolder='Nombre o CUI de paciente o medico'
-
-            param={buscador}
-            setParam={setBuscador}
-
-            searchFn={buscarData}
-            cancelFn={loadTableData}
-        />
-        <DataTable headers={tableColumns} rows={tableData} />
 
         <Modal
-            isOpen={isModalOpen}
-            onRequestClose={cerrarModal}
+            isOpen={isPacientesModalOpen}
+            onRequestClose={cerrarModalPacientes}
             shouldCloseOnEsc={true}
             shouldCloseOnOverlayClick={true}
 
         >
             <div className='modalDiv'>
                 <div className='closeModalDiv'>
-                    <i onClick={cerrarModal} class="bi bi-x closeIcon" />
+                    <i onClick={cerrarModalPacientes} class="bi bi-x closeIcon" />
                 </div>
                 <PatientBasicScreen />
             </div>
+        </Modal>
+        <Modal
+            isOpen={isTableModalOpen}
+            onRequestClose={cerrarModalTabla}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
+
+        >
+            <TableModal 
+                closeModal={() => setIsTableModalOpen(false)}
+
+                setTableData={setTableData}
+                buscarData={buscarData}
+
+                placeHolder='Nombre o CUI de paciente o medico'
+                tableColumns={tableColumns}
+                tableData={tableData}
+            />
         </Modal>
     </div>
 }
