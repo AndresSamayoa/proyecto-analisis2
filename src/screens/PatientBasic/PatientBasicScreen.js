@@ -1,13 +1,13 @@
 import './PatientBasicScreen.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Modal from 'react-modal';
 import axios from 'axios';
 import moment from 'moment';
 
 import PatientForm from '../../components/PatientForm/PatientForm';
-import DataTable from '../../components/DataTable/DataTable';
-import Searcher from '../../components/Searcher/Searcher'
+import TableModal from '../../components/TableModal/TableModal';
 
 const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
@@ -93,7 +93,7 @@ export default function PatientBasicScreen () {
             if (response.status == 200) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
-                await loadTableData();
+                setTableData([]);
             } else {
                 setMensaje('Error al guardar, codigo: ' + response.status);
             }
@@ -102,7 +102,7 @@ export default function PatientBasicScreen () {
         }
     };
 
-    const eliminarItem = async (clienteId) => {
+    const eliminarItem = async (clienteId, param, setMessageParam) => {
         try {
             const response = await axios({
                 url: base_url + '/Pacientes/Delete',
@@ -115,76 +115,23 @@ export default function PatientBasicScreen () {
 
             if (response.status == 200) {
                 cancelarForm();
-                setMensaje('Exito al eliminar');
-                await loadTableData();
+                setMessageParam('Exito al eliminar');
+                await buscarData(param, setMessageParam);
             } else {
-                setMensaje('Error al eliminar, codigo: ' + response.status);
+                setMessageParam('Error al eliminar, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al eliminar el cliente: ' + error.message);
+            setMessageParam('Error al eliminar el cliente: ' + error.message);
         }
     };
 
-    const loadTableData = async () => {
-        try {
-            const response = await axios({
-                url: base_url+'/Pacientes',
-                method: 'GET',
-                validateStatus: () => true,
-                timeout: 30000
-            });
-
-            if (response.status == 200) {
-                const data = [];
-                for (const patient of response.data) {
-                    data.push({
-                        id: patient.paC_id,
-                        nombresCompletos: patient.paC_nombre + ' ' + patient.paC_apellido,
-                        nombres: patient.paC_nombre,
-                        apellidos: patient.paC_apellido,
-                        cui: patient.paC_CUI,
-                        fecha_nacimiento: patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('DD-MM-YYYY') : '',
-                        edad: patient.paC_fecha_nacimiento ? moment().diff(moment(patient.paC_fecha_nacimiento), 'years').toString() : '',
-                        telefono: String(patient.paC_numero_telefonico),
-                        email: patient.paC_correo_electronico,
-                        acciones: <div className='ActionContainer'>
-                            <i 
-                                onClick={()=>{
-                                    setPacienteId(patient.paC_id);
-                                    setNombres(patient.paC_nombre);
-                                    setApellidos(patient.paC_apellido);
-                                    setEmail(patient.paC_correo_electronico);
-                                    setTelefono(String(patient.paC_numero_telefonico));
-                                    setCui(patient.paC_CUI);
-                                    setFechaNacimiento(patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('YYYY-MM-DD') : '');
-                                }} 
-                                class="bi bi-pencil-square ActionItem"
-                            ></i>
-                            <i
-                                onClick={()=>eliminarItem(patient.paC_id)} 
-                                style={{color:"red"}} 
-                                class="bi bi-trash ActionItem"
-                            ></i>
-                        </div>
-                    });
-                }
-
-                setTableData(data);
-            } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
-            }
-        } catch (error) {
-            setMensaje('Error al obtener los datos de la tabla: ' + error.message);
-        }
-    };
-
-    const buscarData = async () => {
+    const buscarData = async (param, setMessageParam) => {
         try {
             const response = await axios({
                 url: base_url+'/Pacientes/fas_buscar_pacientes',
                 method: 'GET',
                 params: {
-                    buscar: buscador
+                    buscar: param
                 },
                 validateStatus: () => true,
                 timeout: 30000
@@ -213,11 +160,12 @@ export default function PatientBasicScreen () {
                                     setTelefono(String(patient.paC_numero_telefonico));
                                     setCui(patient.paC_CUI);
                                     setFechaNacimiento(patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('YYYY-MM-DD') : '');
+                                    setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(patient.paC_id)} 
+                                onClick={()=>eliminarItem(patient.paC_id, param, setMessageParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -227,11 +175,15 @@ export default function PatientBasicScreen () {
 
                 setTableData(data);
             } else {
-                setMensaje('Error al buscar los datos de la tabla, codigo: ' + response.status);
+                setMessageParam('Error al buscar los datos de la tabla, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al buscar los datos de la tabla: ' + error.message);
+            setMessageParam('Error al buscar los datos de la tabla: ' + error.message);
         }
+    }
+
+    const cerrarModalTabla = () => {
+        setIsTableModalOpen(false);
     }
 
     const [tableData, setTableData] = useState([]);
@@ -244,13 +196,12 @@ export default function PatientBasicScreen () {
     const [fechaNacimiento, setFechaNacimiento] = useState('');
     const [sexo, setSexo] = useState('');
     const [mensaje, setMensaje] = useState('');
-    const [buscador, setBuscador] = useState('');
-
-    useEffect(()=>loadTableData, []);
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
 
     return <div className="PatientBasicScreen">
         <div className="TitleContainer">
             <h1>Pacientes</h1>
+            <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>
         </div>
         <PatientForm 
             cancelarFn={cancelarForm}
@@ -274,15 +225,23 @@ export default function PatientBasicScreen () {
             sexo={sexo}
             mensaje={mensaje}
         />
-        <Searcher 
-            placeHolder='Nombre o CUI de paciente'
+        <Modal
+            isOpen={isTableModalOpen}
+            onRequestClose={cerrarModalTabla}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
 
-            param={buscador}
-            setParam={setBuscador}
+        >
+            <TableModal 
+                closeModal={() => setIsTableModalOpen(false)}
 
-            searchFn={buscarData}
-            cancelFn={loadTableData}
-        />
-        <DataTable headers={tableColumns} rows={tableData} />
+                setTableData={setTableData}
+                buscarData={buscarData}
+
+                placeHolder='Nombre o CUI de paciente'
+                tableColumns={tableColumns}
+                tableData={tableData}
+            />
+        </Modal>
     </div>
 };

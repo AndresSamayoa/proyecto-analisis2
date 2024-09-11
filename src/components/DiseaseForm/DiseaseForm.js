@@ -39,8 +39,8 @@ export default function DiseaseForm(props) {
                 <p>{props.mensaje}</p>
         </div>
         <div className="diseaseFormControls">
-            <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>
-            <div className="cancelarBtn" onClick={props.cancelarFn}>Cancelar</div>
+            <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
+            <button className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></button>
         </div>
     </div>
 };

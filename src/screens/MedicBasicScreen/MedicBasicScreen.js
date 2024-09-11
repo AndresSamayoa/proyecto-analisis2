@@ -1,12 +1,12 @@
 import './MedicBasicScreen.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Modal from 'react-modal';
 import axios from 'axios';
 
 import UserForm from '../../components/MedicBasicForm/MedicBasicForm';
-import DataTable from '../../components/DataTable/DataTable';
-import Searcher from '../../components/Searcher/Searcher'
+import TableModal from '../../components/TableModal/TableModal';
 
 const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
@@ -90,7 +90,7 @@ export default function UserBasicScreen () {
             if (response.status == 200) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
-                await loadTableData();
+                setTableData([]);
             } else {
                 setMensaje('Error al guardar, codigo: ' + response.status);
             }
@@ -99,7 +99,7 @@ export default function UserBasicScreen () {
         }
     };
 
-    const eliminarItem = async (medicoId) => {
+    const eliminarItem = async (medicoId, param, setMessageParam) => {
         try {
             const response = await axios({
                 url: base_url + '/Medicos/Delete',
@@ -112,75 +112,23 @@ export default function UserBasicScreen () {
 
             if (response.status == 200) {
                 cancelarForm();
-                setMensaje('Exito al eliminar');
-                await loadTableData();
+                setMessageParam('Exito al eliminar');
+                await buscarData(param, setMessageParam);
             } else {
-                setMensaje('Error al eliminar, codigo: ' + response.status);
+                setMessageParam('Error al eliminar, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al eliminar el medico: ' + error.message);
+            setMessageParam('Error al eliminar el medico: ' + error.message);
         }
     };
 
-    const loadTableData = async () => {
-        try {
-            const response = await axios({
-                url: base_url+'/Medicos/Read',
-                method: 'GET',
-                validateStatus: () => true,
-                timeout: 30000
-            });
-
-            if (response.status == 200) {
-                const data = [];
-                for (const medic of response.data) {
-                    data.push({
-                        id: medic.meD_id,
-                        nombres_completos: medic.meD_nombre + ' ' + medic.meD_apellido,
-                        nombres: medic.meD_nombre,
-                        apellidos: medic.meD_apellido,
-                        email: medic.meD_correo,
-                        telefono: medic.meD_telefono,
-                        tipo: medic.meD_tipo,
-                        numero_colegiado: medic.meD_numero_colegiado,
-                        acciones: <div className='ActionContainer'>
-                            <i 
-                                onClick={()=>{
-                                    setMedicoId(medic.meD_id);
-                                    setNombres(medic.meD_nombre);
-                                    setApellidos(medic.meD_apellido);
-                                    setEmail(medic.meD_correo);
-                                    setTelefono(String(medic.meD_telefono));
-                                    setTipo(medic.meD_tipo);
-                                    setNumeroColegiado(medic.meD_numero_colegiado);
-                                }} 
-                                class="bi bi-pencil-square ActionItem"
-                            ></i>
-                            <i
-                                onClick={()=>eliminarItem(medic.meD_id)} 
-                                style={{color:"red"}} 
-                                class="bi bi-trash ActionItem"
-                            ></i>
-                        </div>
-                    });
-                }
-
-                setTableData(data);
-            } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
-            }
-        } catch (error) {
-            setMensaje('Error al obtener los datos de la tabla: ' + error.message);
-        }
-    };
-
-    const buscarData = async () => {
+    const buscarData = async (param, setMessageParam) => {
         try {
             const response = await axios({
                 url: base_url+'/Medicos/fas_buscar_medicos',
                 method: 'GET',
                 params: {
-                    buscar: buscador,
+                    buscar: param,
                 },
                 validateStatus: () => true,
                 timeout: 30000
@@ -208,11 +156,12 @@ export default function UserBasicScreen () {
                                     setTelefono(medic.meD_telefono);
                                     setTipo(medic.meD_tipo);
                                     setNumeroColegiado(medic.meD_numero_colegiado);
+                                    setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(medic.meD_id)} 
+                                onClick={()=>eliminarItem(medic.meD_id, param, setMessageParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -222,12 +171,16 @@ export default function UserBasicScreen () {
 
                 setTableData(data);
             } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
+                setMessageParam('Error al obtener los datos de la tabla, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al obtener los datos de la tabla: ' + error.message);
+            setMessageParam('Error al obtener los datos de la tabla: ' + error.message);
         }
-    }
+    };
+
+    const cerrarModalTabla = () => {
+        setIsTableModalOpen(false);
+    };
 
     const [tableData, setTableData] = useState([]);
     const [medicoId, setMedicoId] = useState('');
@@ -237,14 +190,13 @@ export default function UserBasicScreen () {
     const [telefono, setTelefono] = useState('');
     const [tipo, setTipo] = useState('');
     const [numeroColegiado, setNumeroColegiado] = useState('');
-    const [buscador, setBuscador] = useState('');
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     const [mensaje, setMensaje] = useState('');
-
-    useEffect(()=>loadTableData, []);
 
     return <div className="UserBasicScreen">
         <div className="TitleContainer">
             <h1>Medicos</h1>
+            <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>
         </div>
         <UserForm 
             cancelarFn={cancelarForm}
@@ -266,15 +218,23 @@ export default function UserBasicScreen () {
             numeroColegiado={numeroColegiado}
             mensaje={mensaje}
         />
-        <Searcher 
-            placeHolder='Nombre o colegiado del medico'
+        <Modal
+            isOpen={isTableModalOpen}
+            onRequestClose={cerrarModalTabla}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
 
-            param={buscador}
-            setParam={setBuscador}
+        >
+            <TableModal 
+                closeModal={() => setIsTableModalOpen(false)}
 
-            searchFn={buscarData}
-            cancelFn={loadTableData}
-        />
-        <DataTable headers={tableColumns} rows={tableData} />
+                setTableData={setTableData}
+                buscarData={buscarData}
+
+                placeHolder='Nombre o colegiado de medico'
+                tableColumns={tableColumns}
+                tableData={tableData}
+            />
+        </Modal>
     </div>
 };

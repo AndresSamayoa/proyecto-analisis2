@@ -1,12 +1,12 @@
 import './DiseaseScreen.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Modal from 'react-modal';
 import axios from 'axios';
 
 import DiseaseForm from '../../components/DiseaseForm/DiseaseForm';
-import DataTable from '../../components/DataTable/DataTable';
-import Searcher from '../../components/Searcher/Searcher'
+import TableModal from '../../components/TableModal/TableModal';
 
 const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
@@ -72,7 +72,7 @@ export default function DiseaseScreen () {
             if (response.status == 200) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
-                await loadTableData();
+                setTableData([]);
             } else {
                 setMensaje('Error al guardar, codigo: ' + response.status);
             }
@@ -81,7 +81,7 @@ export default function DiseaseScreen () {
         }
     };
 
-    const eliminarItem = async (enfermedadId) => {
+    const eliminarItem = async (enfermedadId, param, setMessageParam) => {
         try {
             const response = await axios({
                 url: base_url + '/Enfermedades/Delete',
@@ -95,67 +95,22 @@ export default function DiseaseScreen () {
             if (response.status == 200) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
-                await loadTableData();
+                await buscarData(param, setMessageParam);
             } else {
-                setMensaje('Error al eliminar, codigo: ' + response.status);
+                setMessageParam('Error al eliminar, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al eliminar el cliente: ' + error.message);
+            setMessageParam('Error al eliminar el cliente: ' + error.message);
         }
     };
 
-    const loadTableData = async () => {
-        try {
-            const response = await axios({
-                url: base_url+'/Enfermedades/listar',
-                method: 'GET',
-                validateStatus: () => true,
-                timeout: 30000
-            });
-
-            if (response.status == 200) {
-                const data = [];
-                for (const disease of response.data) {
-                    data.push({
-                        id: disease.enF_id,
-                        nombre: disease.enF_nombre,
-                        descripcion: disease.enF_descripcion,
-                        tipo: disease.enF_tipo_enfermedad,
-                        acciones: <div className='ActionContainer'>
-                            <i 
-                                onClick={()=>{
-                                    setEnfermedadId(disease.enF_id);
-                                    setNombre(disease.enF_nombre);
-                                    setDescripcion(disease.enF_descripcion);
-                                    setTipo(disease.enF_tipo_enfermedad);
-                                }} 
-                                class="bi bi-pencil-square ActionItem"
-                            ></i>
-                            <i
-                                onClick={()=>eliminarItem(disease.enF_id)} 
-                                style={{color:"red"}} 
-                                class="bi bi-trash ActionItem"
-                            ></i>
-                        </div>
-                    });
-                }
-
-                setTableData(data);
-            } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
-            }
-        } catch (error) {
-            setMensaje('Error al obtener los datos de la tabla: ' + error.message);
-        }
-    };
-
-    const buscarData = async () => {
+    const buscarData = async (param, setMessageParam) => {
         try {
             const response = await axios({
                 url: base_url+'/Enfermedades/fas_buscar_enfermedades',
                 method: 'GET',
                 params: {
-                    buscar: buscador
+                    buscar: param
                 },
                 validateStatus: () => true,
                 timeout: 30000
@@ -176,11 +131,12 @@ export default function DiseaseScreen () {
                                     setNombre(disease.enF_nombre);
                                     setDescripcion(disease.enF_descripcion);
                                     setTipo(disease.enF_tipo_enfermedad);
+                                    setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(disease.enF_id)} 
+                                onClick={()=>eliminarItem(disease.enF_id, param, setMessageParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -190,11 +146,15 @@ export default function DiseaseScreen () {
 
                 setTableData(data);
             } else {
-                setMensaje('Error al buscar los datos de la tabla, codigo: ' + response.status);
+                setMessageParam('Error al buscar los datos de la tabla, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al buscar los datos de la tabla: ' + error.message);
+            setMessageParam('Error al buscar los datos de la tabla: ' + error.message);
         }
+    }
+
+    const cerrarModalTabla = () => {
+        setIsTableModalOpen(false);
     }
 
     const [tableData, setTableData] = useState([]);
@@ -203,13 +163,12 @@ export default function DiseaseScreen () {
     const [tipo, setTipo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [mensaje, setMensaje] = useState('');
-    const [buscador, setBuscador] = useState('');
-
-    useEffect(()=>loadTableData, []);
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
 
     return <div className="DiseaseScreen">
         <div className="TitleContainer">
             <h1>Enfermedades</h1>
+            <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>
         </div>
         <DiseaseForm 
             cancelarFn={cancelarForm}
@@ -224,15 +183,23 @@ export default function DiseaseScreen () {
             descripcion={descripcion}
             mensaje={mensaje}
         />
-        <Searcher 
-            placeHolder='Nombre de la enfermedad'
+        <Modal
+            isOpen={isTableModalOpen}
+            onRequestClose={cerrarModalTabla}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
 
-            param={buscador}
-            setParam={setBuscador}
+        >
+            <TableModal 
+                closeModal={() => setIsTableModalOpen(false)}
 
-            searchFn={buscarData}
-            cancelFn={loadTableData}
-        />
-        <DataTable headers={tableColumns} rows={tableData} />
+                setTableData={setTableData}
+                buscarData={buscarData}
+
+                placeHolder='Nombre o CUI de paciente o medico'
+                tableColumns={tableColumns}
+                tableData={tableData}
+            />
+        </Modal>
     </div>
 };

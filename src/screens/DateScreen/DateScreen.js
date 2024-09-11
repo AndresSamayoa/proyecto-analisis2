@@ -1,6 +1,6 @@
 import './DateScreen.css';
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import moment from 'moment';

@@ -7,7 +7,7 @@ export default function Searcher (props) {
 
     return <div className='SearcherContainer'>
         <input type='text' className='SearcherInput' placeholder={props.placeHolder} value={props.param} onChange={setParam}/>
-        <button onClick={props.searchFn} className='SearcherBtn'>Buscar</button>
-        <button onClick={props.cancelFn} className='CancelSearchBtn'>Cancelar</button>
+        <button onClick={props.searchFn} className='SearcherBtn'><i class="bi bi-search" /></button>
+        <button onClick={props.cancelFn} className='CancelSearchBtn'><i class="bi bi-x-lg" /></button>
     </div>
 };

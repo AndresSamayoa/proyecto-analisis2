@@ -27,17 +27,23 @@
 .guardarBtn {
     margin: 0 1%;
     padding: 4px 1%;
+    height: 5vh;
+    width: 10vw;
     background-color: #79DFDF;
     border-radius: 16px;
-    cursor:pointer;
+    border-style: solid;
+    cursor: pointer;
 }
 
 .cancelarBtn {
     margin: 0 1%;
     padding: 4px 1%;
+    height: 5vh;
+    width: 10vw;
     background-color: #A7CACA;
     border-radius: 16px;
-    cursor:pointer;
+    border-style: solid;
+    cursor: pointer;
 }
 
 .controlContainer {

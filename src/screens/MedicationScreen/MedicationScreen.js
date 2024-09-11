@@ -1,11 +1,11 @@
 import './MedicationScreen.css';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Modal from 'react-modal';
 import axios from 'axios';
 
 import MedicationForm from '../../components/MedicationForm/MedicationForm';
-import DataTable from '../../components/DataTable/DataTable';
-import Searcher from '../../components/Searcher/Searcher';
+import TableModal from '../../components/TableModal/TableModal';
 
 const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
@@ -67,7 +67,7 @@ export default function MedicationScreen (props) {
             if (response.status == 200) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
-                await loadTableData();
+                setTableData([]);
             } else {
                 setMensaje('Error al guardar, codigo: ' + response.status);
             }
@@ -76,8 +76,7 @@ export default function MedicationScreen (props) {
         }
     };
 
-    
-    const eliminarItem = async (medicamentoId) => {
+    const eliminarItem = async (medicamentoId, searchParam, setMessageParam) => {
         try {
             const response = await axios({
                 url: base_url + '/Medicamentos/Delete',
@@ -90,23 +89,23 @@ export default function MedicationScreen (props) {
 
             if (response.status == 200) {
                 cancelarForm();
-                setMensaje('Exito al eliminar');
-                await loadTableData();
+                setMessageParam('Exito al eliminar');
+                await buscarData(searchParam, setMessageParam);
             } else {
-                setMensaje('Error al eliminar, codigo: ' + response.status);
+                setMessageParam('Error al eliminar, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al eliminar el cliente: ' + error.message);
+            setMessageParam('Error al eliminar el cliente: ' + error.message);
         }
     };
 
-    const buscarData = async () => {
+    const buscarData = async (param, setMessageParam) => {
         try {
             const response = await axios({
                 url: base_url+'/Medicamentos/fas_buscar_medicamentos',
                 method: 'GET',
                 params:{
-                    buscar: buscador 
+                    buscar: param 
                 },
                 validateStatus: () => true,
                 timeout: 30000
@@ -125,11 +124,12 @@ export default function MedicationScreen (props) {
                                     setMedicamentoId(medication.meD_id);
                                     setNombre(medication.meD_nombre_medicamento);
                                     setDescripcion(medication.meD_descripcion);
+                                    setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(medication.meD_id)} 
+                                onClick={()=>eliminarItem(medication.meD_id, param, setMessageParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -139,68 +139,28 @@ export default function MedicationScreen (props) {
 
                 setTableData(data);
             } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
+                setMessageParam('Error al obtener los datos de la tabla, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al obtener los datos de la tabla: ' + error.message);
+            setMessageParam('Error al obtener los datos de la tabla: ' + error.message);
         }
     }
 
-    const loadTableData = async () => {
-        try {
-            const response = await axios({
-                url: base_url+'/Medicamentos/Read',
-                method: 'GET',
-                validateStatus: () => true,
-                timeout: 30000
-            });
-
-            if (response.status == 200) {
-                const data = [];
-                for (const medication of response.data) {
-                    data.push({
-                        id: medication.meD_id,
-                        nombre: medication.meD_nombre_medicamento,
-                        descripcion: medication.meD_descripcion,
-                        acciones: <div className='ActionContainer'>
-                            <i 
-                                onClick={()=>{
-                                    setMedicamentoId(medication.meD_id);
-                                    setNombre(medication.meD_nombre_medicamento);
-                                    setDescripcion(medication.meD_descripcion);
-                                }} 
-                                class="bi bi-pencil-square ActionItem"
-                            ></i>
-                            <i
-                                onClick={()=>eliminarItem(medication.meD_id)} 
-                                style={{color:"red"}} 
-                                class="bi bi-trash ActionItem"
-                            ></i>
-                        </div>
-                    });
-                }
-
-                setTableData(data);
-            } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
-            }
-        } catch (error) {
-            setMensaje('Error al obtener los datos de la tabla: ' + error.message);
-        }
-    };
+    const cerrarModalTabla = () => {
+        setIsTableModalOpen(false);
+    }
 
     const [tableData, setTableData] = useState([]);
     const [medicamentoId, setMedicamentoId] = useState(0);
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
-    const [buscador, setBuscador] = useState('');
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     const [mensaje, setMensaje] = useState('');
-
-    useEffect(()=>loadTableData, []);
 
     return <div className='MedicationBasicScreen'>
         <div className="TitleContainer">
             <h1>Medicamentos</h1>
+            <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>
         </div>
         <MedicationForm 
             cancelarFn={cancelarForm}
@@ -213,20 +173,23 @@ export default function MedicationScreen (props) {
             setNombre={setNombre}
             setDescripcion={setDescripcion}
         />
+        <Modal
+            isOpen={isTableModalOpen}
+            onRequestClose={cerrarModalTabla}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
 
-        <Searcher 
-            placeHolder='Nombre'
+        >
+            <TableModal 
+                closeModal={() => setIsTableModalOpen(false)}
 
-            param={buscador}
-            setParam={setBuscador}
+                setTableData={setTableData}
+                buscarData={buscarData}
 
-            searchFn={buscarData}
-            cancelFn={loadTableData}
-        />
-
-        <DataTable 
-            headers={tableColumns}
-            rows={tableData}
-        />
+                placeHolder='Nombre de la medicina'
+                tableColumns={tableColumns}
+                tableData={tableData}
+            />
+        </Modal>
     </div>
 }
