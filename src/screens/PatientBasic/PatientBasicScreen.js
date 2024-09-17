@@ -9,7 +9,7 @@ import moment from 'moment';
 import PatientForm from '../../components/PatientForm/PatientForm';
 import TableModal from '../../components/TableModal/TableModal';
 
-const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
+const base_url = process.env.REACT_APP_NODE_API_BASE;
 
 export default function PatientBasicScreen () {
     const tableColumns = [
@@ -43,10 +43,10 @@ export default function PatientBasicScreen () {
 
             if (pacienteId > 0) {
                 method = 'PUT';
-                url = base_url + '/Pacientes/Update'
+                url = base_url + '/api/pacientes/'+pacienteId;
             } else {
                 method = 'POST';
-                url = base_url + '/Pacientes/Create'
+                url = base_url + '/api/pacientes'
             }
 
             if (!nombres || nombres.trim().length < 1) {
@@ -79,23 +79,22 @@ export default function PatientBasicScreen () {
                 url,
                 method,
                 data: {
-                    paC_id: pacienteId ? pacienteId : 0,
-                    paC_nombre: nombres.trim(),
-                    paC_apellido: apellidos.trim(),
-                    paC_CUI: cui.trim(),
-                    paC_fecha_nacimiento: fechaNacimiento,
-                    paC_numero_telefonico: telefono.trim(),
-                    paC_correo_electronico: email.trim().toLowerCase()
+                    nombres: nombres.trim(),
+                    apellidos: apellidos.trim(),
+                    cui: cui.trim(),
+                    fecha_nacimiento: fechaNacimiento,
+                    numero_telefono: telefono.trim(),
+                    correo_electronico: email.trim().toLowerCase()
                 },
                 validateStatus: () => true
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 cancelarForm();
-                setMensaje('Exito al guardar');
+                setMensaje(response.data.message);
                 setTableData([]);
             } else {
-                setMensaje('Error al guardar, codigo: ' + response.status);
+                setMensaje(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensaje('Error al guardar los datos: ' + error.message);
@@ -105,20 +104,17 @@ export default function PatientBasicScreen () {
     const eliminarItem = async (clienteId, param, setMessageParam) => {
         try {
             const response = await axios({
-                url: base_url + '/Pacientes/Delete',
+                url: `${base_url}/api/pacientes/${clienteId}`,
                 method: 'DELETE',
-                params: {
-                    Id: clienteId
-                },
                 validateStatus: () => true
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 cancelarForm();
                 setMessageParam('Exito al eliminar');
                 await buscarData(param, setMessageParam);
             } else {
-                setMessageParam('Error al eliminar, codigo: ' + response.status);
+                setMessageParam(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMessageParam('Error al eliminar el cliente: ' + error.message);
@@ -128,44 +124,44 @@ export default function PatientBasicScreen () {
     const buscarData = async (param, setMessageParam) => {
         try {
             const response = await axios({
-                url: base_url+'/Pacientes/fas_buscar_pacientes',
+                url: `${base_url}/api/pacientes/buscar`,
                 method: 'GET',
                 params: {
-                    buscar: param
+                    parametro: param
                 },
                 validateStatus: () => true,
                 timeout: 30000
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 const data = [];
-                for (const patient of response.data) {
+                for (const patient of response.data.data) {
                     data.push({
-                        id: patient.paC_id,
-                        nombresCompletos: patient.paC_nombre + ' ' + patient.paC_apellido,
-                        nombres: patient.paC_nombre,
-                        apellidos: patient.paC_apellido,
-                        cui: patient.paC_CUI,
-                        fecha_nacimiento: patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('DD-MM-YYYY') : '',
-                        edad: patient.paC_fecha_nacimiento ? moment().diff(moment(patient.paC_fecha_nacimiento), 'years').toString() : '',
-                        telefono: String(patient.paC_numero_telefonico),
-                        email: patient.paC_correo_electronico,
+                        id: patient.PAC_id,
+                        nombresCompletos: patient.PAC_nombre + ' ' + patient.PAC_apellido,
+                        nombres: patient.PAC_nombre,
+                        apellidos: patient.PAC_apellido,
+                        cui: patient.PAC_CUI,
+                        fecha_nacimiento: patient.PAC_fecha_nacimiento ? moment(patient.PAC_fecha_nacimiento).format('DD-MM-YYYY') : '',
+                        edad: patient.PAC_fecha_nacimiento ? moment().diff(moment(patient.PAC_fecha_nacimiento), 'years').toString() : '',
+                        telefono: String(patient.PAC_numero_telefonico),
+                        email: patient.PAC_correo_electronico,
                         acciones: <div className='ActionContainer'>
                             <i 
                                 onClick={()=>{
-                                    setPacienteId(patient.paC_id);
-                                    setNombres(patient.paC_nombre);
-                                    setApellidos(patient.paC_apellido);
-                                    setEmail(patient.paC_correo_electronico);
-                                    setTelefono(String(patient.paC_numero_telefonico));
-                                    setCui(patient.paC_CUI);
-                                    setFechaNacimiento(patient.paC_fecha_nacimiento ? moment(patient.paC_fecha_nacimiento).format('YYYY-MM-DD') : '');
+                                    setPacienteId(patient.PAC_id);
+                                    setNombres(patient.PAC_nombre);
+                                    setApellidos(patient.PAC_apellido);
+                                    setEmail(patient.PAC_correo_electronico);
+                                    setTelefono(String(patient.PAC_numero_telefonico));
+                                    setCui(patient.PAC_CUI);
+                                    setFechaNacimiento(patient.PAC_fecha_nacimiento ? moment(patient.PAC_fecha_nacimiento).format('YYYY-MM-DD') : '');
                                     setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(patient.paC_id, param, setMessageParam)} 
+                                onClick={()=>eliminarItem(patient.PAC_id, param, setMessageParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -175,7 +171,7 @@ export default function PatientBasicScreen () {
 
                 setTableData(data);
             } else {
-                setMessageParam('Error al buscar los datos de la tabla, codigo: ' + response.status);
+                setMessageParam(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMessageParam('Error al buscar los datos de la tabla: ' + error.message);

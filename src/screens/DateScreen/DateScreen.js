@@ -9,7 +9,8 @@ import DateForm from '../../components/DateForm/DateForm';
 import PatientBasicScreen from '../PatientBasic/PatientBasicScreen';
 import TableModal from '../../components/TableModal/TableModal';
 
-const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
+const base_url = process.env.REACT_APP_NODE_API_BASE;
+const base_url_dot_net = process.env.REACT_APP_DOT_NET_API_BASE;
 
 export default function DateScreen () {
     Modal.setAppElement('#root');
@@ -26,27 +27,27 @@ export default function DateScreen () {
     const searchPatients = async (param) => {
         try {
             const response = await axios({
-                url: base_url+'/Pacientes/fas_buscar_pacientes',
+                url: `${base_url}/api/pacientes/buscar`,
                 method: 'GET',
                 params: {
-                    buscar: param
+                    parametro: param
                 },
                 validateStatus: () => true,
                 timeout: 30000
             });
 
-            if (response.status === 200) {
+            if (response.status === 200 && response.data.status) {
                 const data = [];
-                for (const patient of response.data) {
+                for (const patient of response.data.data) {
                     data.push({
-                        value: patient.paC_id,
-                        label: patient.paC_nombre + ' ' + patient.paC_apellido,
+                        value: patient.PAC_id,
+                        label: patient.PAC_nombre + ' ' + patient.PAC_apellido,
                     });
                 }
 
                 setListaPaciente(data);
             } else {
-                setMensaje('Error al obtener los datos de clientes, codigo: ' + response.status);
+                setMensaje(`Error al obtener los datos de clientes, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensaje('Error al obtener los datos de clientes: ' + error.message);
@@ -56,7 +57,7 @@ export default function DateScreen () {
     const searchMedics = async (param) => {
         try {
             const response = await axios({
-                url: base_url+'/Medicos/fas_buscar_medicos',
+                url: base_url_dot_net+'/Medicos/fas_buscar_medicos',
                 method: 'GET',
                 params: {
                     buscar: param
@@ -103,10 +104,10 @@ export default function DateScreen () {
 
             if (citaId > 0) {
                 method = 'PUT';
-                url = base_url + '/CITAS/Update'
+                url = base_url + '/api/citas/'+citaId
             } else {
                 method = 'POST';
-                url = base_url + '/CITAS/Create'
+                url = base_url + '/api/citas'
             }
 
             if (!medico || medico < 1) {
@@ -134,21 +135,20 @@ export default function DateScreen () {
                 url,
                 method,
                 data: {
-                    ciT_id: citaId > 0 ? citaId : 0,
-                    meD_id: medico,
-                    paC_id: paciente,
-                    ciT_fecha: moment(fecha).format('YYYY-MM-DD'),
-                    ciT_hora: Number(hora),
-                    ciT_estado: estado ? 1 : 0
+                    medico_id: medico,
+                    paciente_id: paciente,
+                    fecha: moment(fecha).format('YYYY-MM-DD'),
+                    hora: Number(hora),
+                    estado: estado ? 1 : 0
                   },
                 validateStatus: () => true
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
             } else {
-                setMensaje('Error al guardar, codigo: ' + response.status);
+                setMensaje(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensaje('Error al guardar los datos: ' + error.message);
@@ -158,20 +158,17 @@ export default function DateScreen () {
     const eliminarItem = async (citaId, buscador, setMensajeParam) => {
         try {
             const response = await axios({
-                url: base_url + '/CITAS/Delete',
+                url: base_url + '/api/citas/'+citaId,
                 method: 'DELETE',
-                params: {
-                    Id: citaId
-                },
                 validateStatus: () => true
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 cancelarForm();
                 setMensajeParam('Exito al eliminar');
                 buscarData(buscador, setMensajeParam);
             } else {
-                setMensajeParam('Error al eliminar, codigo: ' + response.status);
+                setMensajeParam(`'Error al eliminar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensajeParam('Error al eliminar la cita: ' + error.message);
@@ -181,42 +178,42 @@ export default function DateScreen () {
     const buscarData = async (buscador, setMensajeParam) => {
         try {
             const response = await axios({
-                url: base_url+'/CITAS/fas_buscar_citas',
+                url: base_url+'/api/citas/buscar',
                 method: 'GET',
                 params: {
-                    buscar: buscador
+                    parametro: buscador
                 },
                 validateStatus: () => true,
                 timeout: 30000
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 const data = [];
-                for (const date of response.data) {
+                for (const date of response.data.data) {
                     data.push({
-                        id: date.ciT_id,
-                        nombres_paciente: date.paC_id,
-                        nombres_medico: date.meD_id,
-                        fecha_cita: date.ciT_fecha ? moment(date.ciT_fecha).format('DD-MM-YYYY') : '',
-                        hora_cita: String(date.ciT_hora),
-                        estado: date.ciT_estado ? 'Activo' : 'Inactivo',
+                        id: date.CIT_id,
+                        nombres_paciente: date.PAC_nombre + ' ' + date.PAC_apellido,
+                        nombres_medico: date.MED_nombre + ' ' + date.MED_apellido,
+                        fecha_cita: date.CIT_fecha ? moment(date.CIT_fecha).format('DD-MM-YYYY') : '',
+                        hora_cita: String(date.CIT_hora),
+                        estado: date.CIT_estado ? 'Activo' : 'Inactivo',
                         acciones: <div className='ActionContainer'>
                             <i 
                                 onClick={()=>{
-                                    setCitaId(date.ciT_id);
-                                    setBuscadorPaciente(date.paC_id);
-                                    setPaciente(date.paC_id);
-                                    setBuscadorMedico(date.meD_id);
-                                    setMedico(date.meD_id);
-                                    setEstado(date.ciT_estado);
-                                    setFecha(date.ciT_fecha ? moment(date.ciT_fecha).format('YYYY-MM-DD') : '');
-                                    setHora(String(date.ciT_hora));
+                                    setCitaId(date.CIT_id);
+                                    setBuscadorPaciente(date.PAC_nombre + ' ' + date.PAC_apellido);
+                                    setPaciente(date.PAC_id);
+                                    setBuscadorMedico(date.MED_nombre + ' ' + date.MED_apellido);
+                                    setMedico(date.MED_id);
+                                    setEstado(date.CIT_estado);
+                                    setFecha(date.CIT_fecha ? moment(date.CIT_fecha).format('YYYY-MM-DD') : '');
+                                    setHora(String(date.CIT_hora));
                                     setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(date.ciT_id, buscador, setMensajeParam)} 
+                                onClick={()=>eliminarItem(date.CIT_id, buscador, setMensajeParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -226,7 +223,7 @@ export default function DateScreen () {
 
                 setTableData(data);
             } else {
-                setMensajeParam('Error al obtener los datos de la tabla, codigo: ' + response.status);
+                setMensajeParam(`Error al obtener los datos de la tabla, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensajeParam('Error al obtener los datos de la tabla: ' + error.message);
