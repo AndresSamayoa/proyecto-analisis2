@@ -1,4 +1,4 @@
-import './Searcher.css'
+// import './Searcher.css'
 
 export default function Searcher (props) {
     const setParam = (e) => {

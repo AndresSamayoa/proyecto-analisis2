@@ -1,5 +1,3 @@
-import './DateForm.css';
-
 import ComboboxSearch from '../ComboboxSearch/ComboboxSearch';
 import moment from 'moment';
 
@@ -17,8 +15,8 @@ export default function DateForm(props) {
         props.setHora(e.target.value ? e.target.value.replace(/[^0-9]/gm,'') : e.target.value)
     };
 
-    return <div className='dateForm'>
-        <div className="dateInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <div className="inputLabelContainerSecundaryContainer">
                     <span className="controlLabel">Paciente</span>
@@ -66,7 +64,7 @@ export default function DateForm(props) {
         <div className='messageContainer'>
                 <p>{props.mensaje}</p>
         </div>
-        <div className="dateFormControls">
+        <div className="crudFormControls">
             <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
             <button className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></button>
         </div>

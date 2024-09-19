@@ -1,6 +1,3 @@
-import './MedicalServicesScreen.css'
-import 'bootstrap-icons/font/bootstrap-icons.css';
-
 import { useState, useEffect } from 'react';
 
 import MedicalServicesForm from '../../components/MedicalServicesForm/MedicalServicesForm';
@@ -47,7 +44,7 @@ export default function MedicalServicesScreen () {
 
     useEffect(loadTableData, []);
 
-    return <div className="MedicalServiceScreen">
+    return <div className="CRUDServiceScreen">
         <div className="TitleContainer">
             <h1>Servicios Medicos</h1>
         </div>

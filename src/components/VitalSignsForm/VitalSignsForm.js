@@ -1,4 +1,3 @@
-import './VitalSignsForm.css';
 
 export default function VitalSignsForm(props) {
 
@@ -38,8 +37,8 @@ export default function VitalSignsForm(props) {
         props.setMasaCorporal(e.target.value)
     };
 
-    return <div className='vitalSignsForm'>
-        <div className="userInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Presion arterial</span>
                 <div className="inputSecundaryContainer">
@@ -95,9 +94,9 @@ export default function VitalSignsForm(props) {
                 </div>
             </div>
         </div>
-        <div className="vitalSignsFormControls">
-            <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>
-            <div className="cancelarBtn" onClick={props.cancelarFn}>Cancelar</div>
+        <div className="crudFormControls">
+            <div className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></div>
+            <div className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></div>
         </div>
     </div>
 };

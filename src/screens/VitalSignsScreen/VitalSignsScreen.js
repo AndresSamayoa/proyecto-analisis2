@@ -1,4 +1,3 @@
-import './VitalSignsScreen.css';
 
 import { useState } from 'react';
 
@@ -34,7 +33,7 @@ export default function VitalSignsScreen (props) {
     const [talla, setTalla] = useState('');
     const [masaCorporal, setMasaCorporal] = useState('');
     
-    return <div className='VitalSignsBasicScreen'>
+    return <div className='CRUDBasicScreen'>
         <div className="TitleContainer">
             <h1>Signos vitales</h1>
         </div>

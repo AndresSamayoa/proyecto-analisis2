@@ -1,5 +1,3 @@
-import './DateScreen.css';
-
 import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
@@ -274,7 +272,7 @@ export default function DateScreen () {
         [buscadorPaciente]
     );
 
-    return <div className='DateBasicScreen'>
+    return <div className='CRUDBasicScreen'>
         <div className="TitleContainer">
             <h1>Citas</h1>
             <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>

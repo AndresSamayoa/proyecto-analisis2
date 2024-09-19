@@ -1,4 +1,3 @@
-import './DiseaseForm.css';
 
 export default function DiseaseForm(props) {
 
@@ -14,8 +13,8 @@ export default function DiseaseForm(props) {
         props.setTipo(e.target.value)
     };
 
-    return <div className='diseaseForm'>
-        <div className="diseaseInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Nombre</span>
                 <div className="inputSecundaryContainer">
@@ -38,7 +37,7 @@ export default function DiseaseForm(props) {
         <div className='messageContainer'>
                 <p>{props.mensaje}</p>
         </div>
-        <div className="diseaseFormControls">
+        <div className="crudFormControls">
             <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
             <button className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></button>
         </div>

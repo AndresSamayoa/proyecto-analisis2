@@ -19,7 +19,6 @@
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
-    background: rgba(234, 251, 204, 1);
     opacity: 1;
     padding: 1% 0;
 }
@@ -29,7 +28,7 @@
     padding: 4px 1%;
     height: 5vh;
     width: 10vw;
-    background-color: #79DFDF;
+    background-color: #0d6efd;
     border-radius: 16px;
     border-style: solid;
     cursor: pointer;
@@ -40,7 +39,7 @@
     padding: 4px 1%;
     height: 5vh;
     width: 10vw;
-    background-color: #A7CACA;
+    background-color: red;
     border-radius: 16px;
     border-style: solid;
     cursor: pointer;

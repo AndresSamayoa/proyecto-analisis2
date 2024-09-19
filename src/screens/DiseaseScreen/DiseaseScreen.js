@@ -1,6 +1,3 @@
-import './DiseaseScreen.css'
-import 'bootstrap-icons/font/bootstrap-icons.css';
-
 import { useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
@@ -165,7 +162,7 @@ export default function DiseaseScreen () {
     const [mensaje, setMensaje] = useState('');
     const [isTableModalOpen, setIsTableModalOpen] = useState(false);
 
-    return <div className="DiseaseScreen">
+    return <div className="CRUDBasicScreen">
         <div className="TitleContainer">
             <h1>Enfermedades</h1>
             <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>

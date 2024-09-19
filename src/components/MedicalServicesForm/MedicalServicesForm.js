@@ -1,4 +1,3 @@
-import './MedicalServicesForm.css';
 
 export default function MedicalServicesForm(props) {
 
@@ -14,8 +13,8 @@ export default function MedicalServicesForm(props) {
         props.setLocal(e.target.checked)
     };
 
-    return <div className='medicalServicesForm'>
-        <div className="medicalServicesInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Nombre</span>
                 <div className="inputSecundaryContainer">
@@ -35,9 +34,9 @@ export default function MedicalServicesForm(props) {
                 </div>
             </div>
         </div>
-        <div className="medicalServicesControls">
-            <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>
-            <div className="cancelarBtn" onClick={props.cancelarFn}>Cancelar</div>
+        <div className="crudControls">
+            <div className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></div>
+            <div className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></div>
         </div>
     </div>
 };

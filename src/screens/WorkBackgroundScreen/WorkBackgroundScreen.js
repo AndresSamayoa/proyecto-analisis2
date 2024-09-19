@@ -1,4 +1,3 @@
-import './WorkBackgroundScreen.css';
 
 import { useState, useEffect } from 'react';
 
@@ -46,7 +45,7 @@ export default function WorkBackgroundScreen (props) {
 
     useEffect(loadTableData, []);
 
-    return <div className='WorkBackgroundBasicScreen'>
+    return <div className='CRUDBasicScreen'>
         <div className="TitleContainer">
             <h1>Historial laboral</h1>
         </div>

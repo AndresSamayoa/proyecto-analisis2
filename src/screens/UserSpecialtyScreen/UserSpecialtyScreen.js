@@ -1,4 +1,3 @@
-import './UserSpecialtyScreen.css';
 
 import { useState, useEffect } from 'react';
 
@@ -42,7 +41,7 @@ export default function UserSpecialtyScreen (props) {
     const [comentarios, setComentarios] = useState('');
     useEffect(loadTableData, []);
 
-    return <div className='UserSpecialtyBasicScreen'>
+    return <div className='CRUDBasicScreen'>
         <div className="TitleContainer">
             <h1>Especialidades</h1>
         </div>

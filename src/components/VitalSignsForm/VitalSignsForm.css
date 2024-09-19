@@ -27,7 +27,7 @@
 .guardarBtn {
     margin: 0 1%;
     padding: 4px 1%;
-    background-color: #79DFDF;
+    background-color: #0d6efd;
     border-radius: 16px;
     cursor:pointer;
 }
@@ -35,7 +35,7 @@
 .cancelarBtn {
     margin: 0 1%;
     padding: 4px 1%;
-    background-color: #A7CACA;
+    background-color: red;
     border-radius: 16px;
     cursor:pointer;
 }

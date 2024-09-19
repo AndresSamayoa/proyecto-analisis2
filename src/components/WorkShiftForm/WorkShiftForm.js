@@ -1,4 +1,4 @@
-import './WorkShiftForm.css';
+// import './WorkShiftForm.css';
 
 import moment from 'moment';
 
@@ -54,8 +54,8 @@ export default function WorkShiftForm(props) {
         props.setDomingo(e.target.checked)
     };
 
-    return <div className='workShiftForm'>
-        <div className="workShiftInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Medico</span>
                 <div className="inputSecundaryContainer">
@@ -143,9 +143,9 @@ export default function WorkShiftForm(props) {
         <div className='messageContainer'>
                 <p>{props.mensaje}</p>
         </div>
-        <div className="workShiftFormControls">
-            <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>
-            <div className="cancelarBtn" onClick={props.cancelarFn}>Cancelar</div>
+        <div className="crudFormControls">
+            <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
+            <button className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></button>
         </div>
     </div>
 };

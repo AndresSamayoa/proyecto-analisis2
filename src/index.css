@@ -11,3 +11,388 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+input::-webkit-calendar-picker-indicator{
+  display: none;
+}
+
+input[type="date"]::-webkit-input-placeholder{ 
+  visibility: hidden !important;
+}
+
+.CRUDBasicScreen {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.TitleContainer {
+    width: 75%;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
+
+.ActionContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.ActionItem {
+    cursor: pointer;
+}
+
+.crudForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 75%;
+  padding-bottom: 1%;
+}
+
+.crudInputs {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: space-evenly; */
+  width: 100%;
+  opacity: 1;
+  padding: 1% 0;
+}
+
+.crudFormControls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  opacity: 1;
+  padding: 1% 0;
+}
+
+.guardarBtn {
+  margin: 0 1%;
+  padding: 4px 1%;
+  height: 5vh;
+  width: 10vw;
+  background-color: #0d6efd;
+  border-radius: 16px;
+  border-style: solid;
+  cursor: pointer;
+}
+
+.cancelarBtn {
+  margin: 0 1%;
+  padding: 4px 1%;
+  height: 5vh;
+  width: 10vw;
+  background-color: red;
+  border-radius: 16px;
+  border-style: solid;
+  cursor: pointer;
+}
+
+.controlContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 1%;
+  width: calc(calc(100% / 3) - 2%);
+}
+
+.inputSecundaryContainer {
+  width: 100%;
+}
+
+.textInput {
+  background-color: white;
+  border-color: black;
+  width: 100%;
+  height: 24px;
+  border: solid;
+  border-color: gray;
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+.dateInput {
+  background-color: white;
+  width: 100%;
+  height: 24px;
+  border: solid;
+  border-color: gray;
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+.textFieldInput {
+  background-color: white;
+  width: 100%;
+  height: 96px;
+  resize: none;
+  border: solid;
+  border-color: gray;
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+.comboBoxInput {
+  background-color: white;
+  width: 100%;
+  height: 24px;
+  border: 0;
+  border: solid;
+  border-color: gray;
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+.controlLabel {
+  width: auto;
+  color: rgba(0, 0, 0, 1);
+  font-size: 16px;
+}
+
+.messageContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.controlContainerWide {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 1%;
+  width: 100%;
+}
+
+.dTable {
+  width: fit-content;
+  max-width: 75%;
+  max-height: 350px;
+  overflow: scroll;
+  display: block
+}
+
+.dTableHeader {
+  display: flex;
+  flex-direction: row;
+  min-width: 100%;
+  width: fit-content;
+  background-color: #3F82DB;
+  color: #000000;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 0;
+}
+
+.dTableHeaderItems {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  word-wrap: break-word;
+  border: solid;
+  border-width: 1px;
+  min-width: 100px;
+  max-width: 500px;
+  flex-basis: 100%;
+}
+
+.dTableHeaderStartItem {
+  border-top-left-radius: 16px;
+  border-top-right-radius: 0px;
+}
+
+.dTableHeaderEndItem {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 16px;
+}
+
+.dTableRows {
+  display: flex;
+  flex-direction: row;
+  min-width: 100%;
+  width: fit-content;
+  color: #000000;
+  padding: 0;
+}
+
+.dTableRowItems {
+  word-wrap: break-word;
+  text-align: center;
+  border: solid;
+  min-width: 100px;
+  max-width: 500px;
+  border-width: 1px;
+  flex-basis: 100%;
+}
+
+.dTableRow0Screen {
+  background-color: #EAFBCC;
+}
+
+.dTableRow1Screen {
+  background-color: #8ED1BF;
+}
+
+.dTableRow0Print {
+  background-color: #FFFFFF;
+}
+
+.dTableRow1Print {
+  background-color: #D4D4D4;
+}
+
+.chbxSearcher {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.chbxSearcherInput {
+  background-color: white;
+  width: 100%;
+  height: 24px;
+  border: solid;
+  border-color: gray;
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+.chbxSearcherElement {
+  width: 100%;
+  cursor: pointer;
+}
+
+.chbxSearcherElement:hover {
+  background-color: #0d6efd;
+}
+
+.chbxSearcherElementList {
+  width: 100%;
+  text-wrap: wrap;
+  background-color: white;
+  z-index:99;
+}
+
+.chbxSearcherhidden {
+  display: none;
+}
+
+.chbxSearcheropen {
+  width: 25%;
+  position: absolute;
+  max-height: 25%;
+  overflow-y: scroll;
+}
+
+.headerContainer {
+  padding-top: 1%;
+  background-color: rgba(234, 251, 204, 1);
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.headerLogoContainer {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerLogo {
+  width: 16%;
+}
+
+.headerTitle {
+  font-size: 100%;
+}
+
+.headerLinks {
+  width: 75%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.headerLink {
+  margin-left: 1%;
+  font-size: 100%;
+  color: #000000;
+  text-decoration: none;
+}
+
+.SearcherContainer {
+  width: 75%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 4%;
+}
+
+.SearcherInput {
+  width: 80%;
+  height: 36px;
+  border: solid;
+  border-color: gray;
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+.SearcherBtn {
+  background-color: #0d6efd;
+  margin-left: 4px;
+  width: 15%;
+  height: 36px;
+  font-size: 1rem;
+  border: 0;
+  border-radius: 16px;
+  cursor:pointer;
+}
+
+.CancelSearchBtn {
+  background-color: red;
+  margin-left: 4px;
+  width: 15%;
+  height: 36px;
+  font-size: 1rem;
+  border: 0;
+  border-radius: 16px;
+  cursor:pointer;
+}
+
+.TableModalComponent {
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.closeModalDiv {
+  width: 100%;
+  height: 10vh;
+  display: flex;
+  flex-direction: row-reverse;
+  color: red;
+}
+
+.closeIcon {
+  font-size: 10vh;
+  cursor: pointer;
+}
+
+.openModal {
+  margin-left: 4px;
+  cursor: pointer;
+}

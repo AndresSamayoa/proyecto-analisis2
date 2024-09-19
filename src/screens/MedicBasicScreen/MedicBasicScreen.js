@@ -1,5 +1,4 @@
-import './MedicBasicScreen.css'
-import 'bootstrap-icons/font/bootstrap-icons.css';
+// import './MedicBasicScreen.css'
 
 import { useState } from 'react';
 import Modal from 'react-modal';
@@ -193,7 +192,7 @@ export default function UserBasicScreen () {
     const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     const [mensaje, setMensaje] = useState('');
 
-    return <div className="UserBasicScreen">
+    return <div className="CRUDBasicScreen">
         <div className="TitleContainer">
             <h1>Medicos</h1>
             <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>

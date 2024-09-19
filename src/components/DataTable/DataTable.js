@@ -1,4 +1,4 @@
-import './DataTable.css'
+// import './DataTable.css'
 
 
 export default function DataTable(props) {

@@ -1,12 +1,9 @@
-import './WorkShiftScreen.css';
-
 import { useState, useEffect } from 'react'
 import axios from 'axios';
 import moment from 'moment';
 
 import WorkShiftForm from '../../components/WorkShiftForm/WorkShiftForm';
 import DataTable from '../../components/DataTable/DataTable';
-import Searcher from '../../components/Searcher/Searcher'
 
 const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
 
@@ -298,7 +295,7 @@ export default function WorkShiftScreen () {
         [buscadorMedico]
     );
 
-    return <div className='WorkShiftBasicScreen'>
+    return <div className='CRUDBasicScreen'>
         <div className="TitleContainer">
             <h1>Turnos</h1>
         </div>

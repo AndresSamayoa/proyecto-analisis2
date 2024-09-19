@@ -1,4 +1,3 @@
-import './ComboboxSearch.css'
 
 import { useState } from 'react';
 

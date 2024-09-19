@@ -1,4 +1,3 @@
-import './MedicationScreen.css';
 
 import { useState } from 'react';
 import Modal from 'react-modal';
@@ -157,7 +156,7 @@ export default function MedicationScreen (props) {
     const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     const [mensaje, setMensaje] = useState('');
 
-    return <div className='MedicationBasicScreen'>
+    return <div className='CRUDBasicScreen'>
         <div className="TitleContainer">
             <h1>Medicamentos</h1>
             <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>

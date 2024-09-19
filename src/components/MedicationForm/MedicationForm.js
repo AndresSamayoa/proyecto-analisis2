@@ -1,4 +1,3 @@
-import './MedicationForm.css';
 
 export default function MedicationForm(props) {
 
@@ -10,8 +9,8 @@ export default function MedicationForm(props) {
         props.setDescripcion(e.target.value)
     };
 
-    return <div className='medicationForm'>
-        <div className="medicationInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Nombre</span>
                 <div className="inputSecundaryContainer">
@@ -28,7 +27,7 @@ export default function MedicationForm(props) {
         <div className='messageContainer'>
                 <p>{props.mensaje}</p>
         </div>
-        <div className="medicationFormControls">
+        <div className="crudFormControls">
             <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
             <button className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></button>
         </div>

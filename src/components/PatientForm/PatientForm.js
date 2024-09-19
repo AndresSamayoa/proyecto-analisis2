@@ -1,5 +1,3 @@
-import './PatientForm.css';
-
 import moment from 'moment';
 
 export default function PatientForm(props) {
@@ -23,8 +21,8 @@ export default function PatientForm(props) {
         props.setFechaNacimiento(e.target.value)
     };
 
-    return <div className='patientForm'>
-        <div className="patientInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Nombre</span>
                 <div className="inputSecundaryContainer">
@@ -75,7 +73,7 @@ export default function PatientForm(props) {
         <div className='messageContainer'>
                 <p>{props.mensaje}</p>
         </div>
-        <div className="patientFormControls">
+        <div className="crudFormControls">
             <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
             <button className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></button>
         </div>

@@ -1,4 +1,3 @@
-import './UserSpecialtyForm.css';
 
 import ComboboxSearch from '../ComboboxSearch/ComboboxSearch';
 
@@ -16,8 +15,8 @@ export default function UserSpecialtyForm(props) {
         props.setComentarios(e.target.value)
     };
 
-    return <div className='userSpecialtyForm'>
-        <div className="userSpecialtyInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Especialidades</span>
                 <div className="inputSecundaryContainer">
@@ -48,9 +47,9 @@ export default function UserSpecialtyForm(props) {
                 </div>
             </div>
         </div>
-        <div className="userSpecialtyControls">
-            <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>
-            <div className="cancelarBtn" onClick={props.cancelarFn}>Cancelar</div>
+        <div className="crudControls">
+            <div className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></div>
+            <div className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></div>
         </div>
     </div>
 };

@@ -1,4 +1,3 @@
-import './WorkBackgroundForm.css';
 
 export default function WorkBackgroundForm(props) {
 
@@ -26,8 +25,8 @@ export default function WorkBackgroundForm(props) {
         props.setEnfermedadLaboral(e.target.value)
     };
 
-    return <div className='workBackground'>
-        <div className="userInputs">
+    return <div className='crudForm'>
+        <div className="crudInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Empresa</span>
                 <div className="inputSecundaryContainer">
@@ -65,9 +64,9 @@ export default function WorkBackgroundForm(props) {
                 </div>
             </div>
         </div>
-        <div className="workBackgroundControls">
-            <div className="guardarBtn" onClick={props.guardarFn}>Guardar</div>
-            <div className="cancelarBtn" onClick={props.cancelarFn}>Cancelar</div>
+        <div className="crudFormControls">
+            <div className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></div>
+            <div className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></div>
         </div>
     </div>
 };
