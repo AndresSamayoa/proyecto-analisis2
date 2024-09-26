@@ -3,17 +3,15 @@ import moment from 'moment';
 
 export default function DateForm(props) {
 
-    const setEstado = (e) => {
-        props.setEstado(e.target.checked)
-    };
-
     const setFecha = (e) => {
-        props.setFecha(e.target.value)
+        const start = moment(e.target.value, 'YYYY-MM-DDTHH:mm');
+        const remainder = start.minute() == 0 ? 0 : 30 - (start.minute()%30);
+
+        const fechaEnvio = (moment(start).add(remainder, "minutes").format("YYYY-MM-DD HH:mm:00"));
+
+        props.setFecha(fechaEnvio);
     };
 
-    const setHora = (e) => {
-        props.setHora(e.target.value ? e.target.value.replace(/[^0-9]/gm,'') : e.target.value)
-    };
 
     return <div className='crudForm'>
         <div className="crudInputs">
@@ -43,21 +41,9 @@ export default function DateForm(props) {
                 </div>
             </div>
             <div className="controlContainer">
-                <span className="controlLabel">Estado</span>
-                <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkBoxInput" checked={props.estado} onChange={setEstado}/>
-                </div>
-            </div>
-            <div className="controlContainer">
                 <span className="controlLabel">Fecha</span>
                 <div className="inputSecundaryContainer">
-                    <input className="dateInput" type="date" min={moment().add(1,'day').format('YYYY-MM-DD')} value={props.fecha} onChange={setFecha}/>
-                </div>
-            </div>
-            <div className="controlContainer">
-                <span className="controlLabel">Hora</span>
-                <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" value={props.hora} onChange={setHora}/>
+                    <input className="dateInput" type="datetime-local" min={moment().add(1,'day').format('YYYY-MM-DDT00:00')} value={moment(props.fecha).format('YYYY-MM-DDTHH:mm')} onChange={setFecha}/>
                 </div>
             </div>
         </div>

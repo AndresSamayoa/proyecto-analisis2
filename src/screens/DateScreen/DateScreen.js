@@ -17,7 +17,6 @@ export default function DateScreen () {
         {field: 'nombres_paciente', text: 'Pacientes'},
         {field: 'nombres_medico', text: 'Medicos'},
         {field: 'fecha_cita', text: 'Fecha de cita'},
-        {field: 'hora_cita', text: 'Hora de cita'},
         {field: 'estado', text: 'Estado'},
         {field: 'acciones', text: 'Acciones'}
     ];
@@ -88,7 +87,6 @@ export default function DateScreen () {
         setPaciente(0);
         setBuscadorMedico('');
         setMedico(0);
-        setEstado(true);
         setFecha('');
         setHora('');
         setMensaje('');
@@ -99,6 +97,7 @@ export default function DateScreen () {
             const errores = [];
             let method;
             let url;
+            let fechaEnvio ;
 
             if (citaId > 0) {
                 method = 'PUT';
@@ -117,10 +116,8 @@ export default function DateScreen () {
             }
             if (!fecha) {
                 errores.push('La fecha de la cita es un campo obligatorio.');
-            }
-            console.log((hora >= 0 && hora <= 23))
-            if (!hora || !(hora >= 0 && hora <= 23) ) {
-                errores.push('La hora debe estar entre 0-23');
+            } else {
+                fechaEnvio = (moment(start).add(remainder, "minutes").format("YYYY-MM-DD hh:mm:00"));
             }
 
             if (errores.length > 0) {
@@ -135,9 +132,7 @@ export default function DateScreen () {
                 data: {
                     medico_id: medico,
                     paciente_id: paciente,
-                    fecha: moment(fecha).format('YYYY-MM-DD'),
-                    hora: Number(hora),
-                    estado: estado ? 1 : 0
+                    fecha: fechaEnvio,
                   },
                 validateStatus: () => true
             });
@@ -192,9 +187,8 @@ export default function DateScreen () {
                         id: date.CIT_id,
                         nombres_paciente: date.PAC_nombre + ' ' + date.PAC_apellido,
                         nombres_medico: date.MED_nombre + ' ' + date.MED_apellido,
-                        fecha_cita: date.CIT_fecha ? moment(date.CIT_fecha).format('DD-MM-YYYY') : '',
-                        hora_cita: String(date.CIT_hora),
-                        estado: date.CIT_estado ? 'Activo' : 'Inactivo',
+                        fecha_cita: date.CIT_fecha ? moment(date.CIT_fecha).format('DD-MM-YYYY HH:mm') : '',
+                        estado: date.CIT_estado,
                         acciones: <div className='ActionContainer'>
                             <i 
                                 onClick={()=>{
@@ -203,9 +197,7 @@ export default function DateScreen () {
                                     setPaciente(date.PAC_id);
                                     setBuscadorMedico(date.MED_nombre + ' ' + date.MED_apellido);
                                     setMedico(date.MED_id);
-                                    setEstado(date.CIT_estado);
-                                    setFecha(date.CIT_fecha ? moment(date.CIT_fecha).format('YYYY-MM-DD') : '');
-                                    setHora(String(date.CIT_hora));
+                                    setFecha(date.CIT_fecha ? moment(date.CIT_fecha).format('DD-MM-YYYY HH:mm') : '');
                                     setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
@@ -249,7 +241,6 @@ export default function DateScreen () {
     const [paciente, setPaciente] = useState(0);
     const [buscadorMedico, setBuscadorMedico] = useState('');
     const [medico, setMedico] = useState(0);
-    const [estado, setEstado] = useState(true);
     const [fecha, setFecha] = useState('');
     const [hora, setHora] = useState('');
     const [isPacientesModalOpen, setIsPacientesModalOpen] = useState(false);
@@ -286,7 +277,6 @@ export default function DateScreen () {
             listaMedicos={listaMedicos}
             buscadorPaciente={buscadorPaciente}
             listaPacientes={listaPacientes}
-            estado={estado}
             fecha={fecha}
             hora={hora}
             mensaje={mensaje}
@@ -295,7 +285,6 @@ export default function DateScreen () {
             setMedico={setMedico}
             setBuscadorPaciente={setBuscadorPaciente}
             setPaciente={setPaciente}
-            setEstado={setEstado}
             setFecha={setFecha}
             setHora={setHora}
         />
