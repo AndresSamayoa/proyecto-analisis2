@@ -5,7 +5,7 @@ import axios from 'axios';
 import DiseaseForm from '../../components/DiseaseForm/DiseaseForm';
 import TableModal from '../../components/TableModal/TableModal';
 
-const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
+const base_url = process.env.REACT_APP_NODE_API_BASE;
 
 export default function DiseaseScreen () {
     const tableColumns = [
@@ -32,10 +32,10 @@ export default function DiseaseScreen () {
 
             if (enfermedadId > 0) {
                 method = 'PUT';
-                url = base_url + '/Enfermedades/Update'
+                url = base_url + '/api/Enfermedades/'+enfermedadId
             } else {
                 method = 'POST';
-                url = base_url + '/Enfermedades/Guardar'
+                url = base_url + '/api/Enfermedades'
             }
 
             if (!nombre || nombre.trim().length < 1) {
@@ -58,20 +58,19 @@ export default function DiseaseScreen () {
                 url,
                 method,
                 data: {
-                    enF_id: enfermedadId ? enfermedadId : 0,
-                    enF_nombre: nombre.trim(),
-                    enF_descripcion: descripcion.trim(),
-                    enF_tipo_enfermedad: tipo.trim()
+                    nombre: nombre.trim(),
+                    descripcion: descripcion.trim(),
+                    tipoenfermedad: tipo.trim()
                 },
                 validateStatus: () => true
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
                 setTableData([]);
             } else {
-                setMensaje('Error al guardar, codigo: ' + response.status);
+                setMensaje(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensaje('Error al guardar los datos: ' + error.message);
@@ -81,20 +80,17 @@ export default function DiseaseScreen () {
     const eliminarItem = async (enfermedadId, param, setMessageParam) => {
         try {
             const response = await axios({
-                url: base_url + '/Enfermedades/Delete',
+                url: base_url + '/api/Enfermedades/'+enfermedadId,
                 method: 'DELETE',
-                params: {
-                    Id: enfermedadId
-                },
                 validateStatus: () => true
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
                 await buscarData(param, setMessageParam);
             } else {
-                setMessageParam('Error al eliminar, codigo: ' + response.status);
+                setMessageParam(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMessageParam('Error al eliminar el cliente: ' + error.message);
@@ -104,36 +100,36 @@ export default function DiseaseScreen () {
     const buscarData = async (param, setMessageParam) => {
         try {
             const response = await axios({
-                url: base_url+'/Enfermedades/fas_buscar_enfermedades',
+                url: base_url+'/api/Enfermedades/buscar',
                 method: 'GET',
                 params: {
-                    buscar: param
+                    parametro: param
                 },
                 validateStatus: () => true,
                 timeout: 30000
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 const data = [];
-                for (const disease of response.data) {
+                for (const disease of response.data.data) {
                     data.push({
-                        id: disease.enF_id,
-                        nombre: disease.enF_nombre,
-                        descripcion: disease.enF_descripcion,
-                        tipo: disease.enF_tipo_enfermedad,
+                        id: disease.ENF_id,
+                        nombre: disease.ENF_nombre,
+                        descripcion: disease.ENF_descripcion,
+                        tipo: disease.ENF_tipo_enfermedad,
                         acciones: <div className='ActionContainer'>
                             <i 
                                 onClick={()=>{
-                                    setEnfermedadId(disease.enF_id);
-                                    setNombre(disease.enF_nombre);
-                                    setDescripcion(disease.enF_descripcion);
-                                    setTipo(disease.enF_tipo_enfermedad);
+                                    setEnfermedadId(disease.ENF_id);
+                                    setNombre(disease.ENF_nombre);
+                                    setDescripcion(disease.ENF_descripcion);
+                                    setTipo(disease.ENF_tipo_enfermedad);
                                     setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(disease.enF_id, param, setMessageParam)} 
+                                onClick={()=>eliminarItem(disease.ENF_id, param, setMessageParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -143,7 +139,7 @@ export default function DiseaseScreen () {
 
                 setTableData(data);
             } else {
-                setMessageParam('Error al buscar los datos de la tabla, codigo: ' + response.status);
+                setMessageParam(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMessageParam('Error al buscar los datos de la tabla: ' + error.message);

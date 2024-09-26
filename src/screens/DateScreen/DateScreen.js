@@ -8,7 +8,6 @@ import PatientBasicScreen from '../PatientBasic/PatientBasicScreen';
 import TableModal from '../../components/TableModal/TableModal';
 
 const base_url = process.env.REACT_APP_NODE_API_BASE;
-const base_url_dot_net = process.env.REACT_APP_DOT_NET_API_BASE;
 
 export default function DateScreen () {
     Modal.setAppElement('#root');
@@ -110,14 +109,13 @@ export default function DateScreen () {
             if (!medico || medico < 1) {
                 errores.push('El medico es un campo obligatorio.');
             }
-            console.log(paciente);
             if (!paciente || paciente < 1) {
                 errores.push('El paciente es un campo obligatorio.');
             }
             if (!fecha) {
                 errores.push('La fecha de la cita es un campo obligatorio.');
             } else {
-                fechaEnvio = (moment(start).add(remainder, "minutes").format("YYYY-MM-DD hh:mm:00"));
+                fechaEnvio = (moment(fecha).format("YYYY-MM-DD hh:mm:00"));
             }
 
             if (errores.length > 0) {
