@@ -54,27 +54,27 @@ export default function DateScreen () {
     const searchMedics = async (param) => {
         try {
             const response = await axios({
-                url: base_url_dot_net+'/Medicos/fas_buscar_medicos',
+                url: base_url+'/api/medicos/buscar',
                 method: 'GET',
                 params: {
-                    buscar: param
+                    parametro: param
                 },
                 validateStatus: () => true,
                 timeout: 30000
             });
 
-            if (response.status === 200) {
+            if (response.status === 200 && response.data.status) {
                 const data = [];
-                for (const patient of response.data) {
+                for (const patient of response.data.data) {
                     data.push({
-                        value: patient.meD_id,
-                        label: patient.meD_nombre + ' ' + patient.meD_apellido,
+                        value: patient.MED_id,
+                        label: patient.MED_nombre + ' ' + patient.MED_apellido,
                     });
                 }
 
                 setListaMedicos(data);
             } else {
-                setMensaje('Error al obtener los datos de clientes, codigo: ' + response.status);
+                setMensaje(`Error al obtener los datos de clientes, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensaje('Error al obtener los datos de clientes: ' + error.message);
