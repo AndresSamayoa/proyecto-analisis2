@@ -35,6 +35,14 @@ input[type="date"]::-webkit-input-placeholder{
     justify-content: start;
 }
 
+.TableDetailContainer{
+  width: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .ActionContainer {
     width: 100%;
     display: flex;
@@ -54,10 +62,27 @@ input[type="date"]::-webkit-input-placeholder{
   padding-bottom: 1%;
 }
 
+.crudFormModal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 1%;
+}
+
 .crudInputs {
   display: flex;
   flex-wrap: wrap;
   /* justify-content: space-evenly; */
+  width: 100%;
+  opacity: 1;
+  padding: 1% 0;
+}
+
+.crudInputsModal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
   width: 100%;
   opacity: 1;
   padding: 1% 0;
@@ -100,6 +125,15 @@ input[type="date"]::-webkit-input-placeholder{
   align-items: start;
   padding: 1%;
   width: calc(calc(100% / 3) - 2%);
+}
+
+.controlContainerModal {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 1%;
+  width: 30%;
+  margin: 10px auto;
 }
 
 .inputSecundaryContainer {
@@ -377,6 +411,11 @@ input[type="date"]::-webkit-input-placeholder{
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.modalDiv {
+  width: 100%;
+  margin: 0;
 }
 
 .closeModalDiv {

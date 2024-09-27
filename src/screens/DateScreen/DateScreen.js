@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Modal from 'react-modal';
 import axios from 'axios';
 import moment from 'moment';
@@ -205,6 +206,10 @@ export default function DateScreen () {
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
+                            <Link to={'/date/detail/'} state={{citaId: date.CIT_id}}> <i
+                                style={{color:"blue"}} 
+                                class="bi bi-eye ActionItem"
+                            ></i> </Link>
                         </div>
                     });
                 }
