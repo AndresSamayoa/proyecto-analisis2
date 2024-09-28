@@ -29,12 +29,8 @@ export default function VitalSignsForm(props) {
         props.setPeso(e.target.value)
     };
 
-    const setTalla = (e) => {
-        props.setTalla(e.target.value)
-    };
-
-    const setMasaCorporal = (e) => {
-        props.setMasaCorporal(e.target.value)
+    const setEstatura = (e) => {
+        props.setEstatura(e.target.value)
     };
 
     return <div className='crudForm'>
@@ -82,21 +78,14 @@ export default function VitalSignsForm(props) {
                 </div>
             </div>
             <div className="controlContainer">
-                <span className="controlLabel">Talla en m</span>
+                <span className="controlLabel">Estatura en m</span>
                 <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" value={props.talla} onChange={setTalla}/>
-                </div>
-            </div>
-            <div className="controlContainer">
-                <span className="controlLabel">Indice de masa corporal (%)</span>
-                <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" value={props.masaCorporal} onChange={setMasaCorporal}/>
+                    <input type="text" className="textInput" value={props.estatura} onChange={setEstatura}/>
                 </div>
             </div>
         </div>
         <div className="crudFormControls">
-            <div className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></div>
-            <div className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></div>
+            <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
         </div>
     </div>
 };

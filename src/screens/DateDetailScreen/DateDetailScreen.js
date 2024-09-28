@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import DataTable from '../../components/DataTable/DataTable';
 import MedicalServiceDateForm from '../../components/MedicalServiceDateForm/MedicalServiceDateForm';
+import VitalSignsForm from '../../components/VitalSignsForm/VitalSignsForm';
 
 const base_url = process.env.REACT_APP_NODE_API_BASE;
 
@@ -67,6 +68,86 @@ export default function DateScreen () {
 
             if (response.status == 200 && response.data.status) {
                 clearService();
+                getDateInfo();
+                setServiceMessage('Exito al guardar');
+            } else {
+                setServiceMessage(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
+            }
+        } catch (error) {
+            setServiceMessage('Error al guardar los datos: ' + error.message);
+        }
+    }
+
+    const saveSignosVitales = async () => {
+        try {
+            const errores = [];
+            let method;
+            let url;
+
+            if (signoVitalId > 0) {
+                method = 'PUT';
+                url = base_url + '/api/Signosvitales/'+signoVitalId
+            } else {
+                method = 'POST';
+                url = base_url + '/api/Signosvitales'
+            }
+
+            if (!presionArterial || presionArterial.length < 1) {
+                errores.push('La presion arterial es un campo obligatorio.');
+            }
+
+            if (!temperatura || temperatura.length < 1) {
+                errores.push('La temperatura es un campo obligatorio.');
+            }
+
+            if (!frecuenciaCardiaca || frecuenciaCardiaca.length < 1) {
+                errores.push('La frecuencia cardiaca es un campo obligatorio.');
+            }
+
+            if (!respiraciones || respiraciones.length < 1) {
+                errores.push('Las respiraciones por minuto es un campo obligatorio.');
+            }
+
+            if (!so2 || so2.length < 1) {
+                errores.push('La oxigenacion es un campo obligatorio.');
+            }
+
+            if (!glucosa || glucosa.length < 1) {
+                errores.push('La glucosa es un campo obligatorio.');
+            }
+
+            if (!peso || peso.length < 1) {
+                errores.push('El peso es un campo obligatorio.');
+            }
+
+            if (!estatura || estatura.length < 1) {
+                errores.push('La estatura es un campo obligatorio.');
+            }
+
+            if (errores.length > 0) {
+                let mensajeError = errores.join(' ');
+                setServiceMessage(mensajeError)
+                return ;
+            }
+
+            const response = await axios({
+                url,
+                method,
+                data: {
+                    cita_id: citaId,
+                    presion_arterial: presionArterial,
+                    temperatura: temperatura,
+                    frecuenciacardiaca: frecuenciaCardiaca,
+                    respiraciones: respiraciones,
+                    oxigenacion: so2,
+                    glucosa: glucosa,
+                    peso: peso,
+                    estatura: estatura,
+                  },
+                validateStatus: () => true
+            });
+
+            if (response.status == 200 && response.data.status) {
                 getDateInfo();
                 setServiceMessage('Exito al guardar');
             } else {
@@ -141,6 +222,7 @@ export default function DateScreen () {
                 setNombresMedico(response.data.data.MED_nombres);
                 setFechaCita(response.data.data.CIT_fecha ? moment(response.data.data.CIT_fecha).format('DD-MM-YY HH:mm') : '')
 
+                // Generate service table
                 for (const service of response.data.data.procedimientos) {
                     servicesData.push({
                         nombre: service.CPM_nombre,
@@ -165,6 +247,19 @@ export default function DateScreen () {
                 }
 
                 setServicesTable(servicesData);
+
+                // Get vital signs data
+                if (response.data.data.signosVitales) {
+                    setSignoVitalId(response.data.data.signosVitales.SIG_id);
+                    setPresionArterial(response.data.data.signosVitales.SIG_presion_arterial);
+                    setTemperatura(response.data.data.signosVitales.SIG_temperatura);
+                    setFrecuenciaCardiaca(response.data.data.signosVitales.SIG_frecuencia_cardiaca);
+                    setRespiraciones(response.data.data.signosVitales.SIG_respiraciones);
+                    setSo2(response.data.data.signosVitales.SIG_oxigenacion);
+                    setGlucosa(response.data.data.signosVitales.SIG_glucosa);
+                    setPeso(response.data.data.signosVitales.SIG_peso);
+                    setEstatura(response.data.data.signosVitales.SIG_estatura);
+                }
             } else {
                 setMensaje(`Error al obtener los datos de la pantalla, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
@@ -186,7 +281,15 @@ export default function DateScreen () {
     const [listaServicios, setListaServicios] = useState([]);
     const [serviceMessage, setServiceMessage] = useState('');
     // Signos vitales
-
+    const [signoVitalId, setSignoVitalId] = useState(0)
+    const [presionArterial, setPresionArterial] = useState('')
+    const [temperatura, setTemperatura] = useState('')
+    const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState('')
+    const [respiraciones, setRespiraciones] = useState('')
+    const [so2, setSo2] = useState('')
+    const [glucosa, setGlucosa] = useState('')
+    const [peso, setPeso] = useState('')
+    const [estatura, setEstatura] = useState('')
     // General pantalla
     const [mensaje, setMensaje] = useState('');
 
@@ -207,10 +310,27 @@ export default function DateScreen () {
         <div className='TableDetailContainer'>
             <div className="TitleContainer">
                 <h2>Signos vitales</h2>
-                <i class="bi bi-plus-circle openModal" />
             </div>
-            <DataTable 
-                headers={servicesColumns} rows={servicesTable}
+            <VitalSignsForm
+                guardarFn={saveSignosVitales}
+
+                presionArterial={presionArterial}
+                temperatura={temperatura}
+                frecuenciaCardiaca={frecuenciaCardiaca}
+                respiraciones={respiraciones}
+                so2={so2}
+                glucosa={glucosa}
+                peso={peso}
+                estatura={estatura}
+
+                setPresionArterial={setPresionArterial}
+                setTemperatura={setTemperatura}
+                setFrecuenciaCardiaca={setFrecuenciaCardiaca}
+                setRespiraciones={setRespiraciones}
+                setSo2={setSo2}
+                setGlucosa={setGlucosa}
+                setPeso={setPeso}
+                setEstatura={setEstatura}
             />
         </div>
         <div className='TableDetailContainer'>
