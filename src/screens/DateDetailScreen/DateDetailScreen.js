@@ -80,6 +80,10 @@ export default function DateScreen () {
 
     const saveSignosVitales = async () => {
         try {
+            if (estadoCita != 'Atendida') {
+                return setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
+            }
+
             const errores = [];
             let method;
             let url;
@@ -149,12 +153,12 @@ export default function DateScreen () {
 
             if (response.status == 200 && response.data.status) {
                 getDateInfo();
-                setServiceMessage('Exito al guardar');
+                setMensaje('Exito al guardar los signos vitales');
             } else {
-                setServiceMessage(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
+                setMensaje(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
-            setServiceMessage('Error al guardar los datos: ' + error.message);
+            setMensaje('Error al guardar los datos: ' + error.message);
         }
     }
 
@@ -206,6 +210,33 @@ export default function DateScreen () {
         }
     }
 
+    const updateNextState = async () => {
+        try {
+            let url;
+
+            if (estadoCita === 'Programada') {
+                url = base_url + '/api/citas/atender/'+ citaId
+            } else if (estadoCita === 'Atendida') {
+                url = base_url + '/api/citas/cerrar/'+ citaId
+            }
+
+            const response = await axios({
+                url,
+                method: 'PUT',
+                validateStatus: () => true
+            });
+
+            if (response.status == 200 && response.data.status) {
+                getDateInfo();
+                setMensaje('Exito al actualizar el estado');
+            } else {
+                setMensaje(`Error al actualizar el estado, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
+            }
+        } catch (error) {
+            setMensaje('Error al actualizar el estado: ' + error.message);
+        }
+    }
+
     const getDateInfo = async () => {
         try {
             const response = await axios({
@@ -221,6 +252,7 @@ export default function DateScreen () {
                 setNombresPaciente(response.data.data.PAC_nombres);
                 setNombresMedico(response.data.data.MED_nombres);
                 setFechaCita(response.data.data.CIT_fecha ? moment(response.data.data.CIT_fecha).format('DD-MM-YY HH:mm') : '')
+                setEstadoCita(response.data.data.CIT_estado);
 
                 // Generate service table
                 for (const service of response.data.data.procedimientos) {
@@ -230,15 +262,23 @@ export default function DateScreen () {
                         acciones: <div className='ActionContainer'>
                             <i 
                                 onClick={()=>{
-                                    setServicesModal(true);
-                                    setServiceDateId(service.PRO_id);
-                                    setServiceId(service.CPM_id);
-                                    setServiceName(service.CPM_nombre)
+                                    if (estadoCita == 'Atendida') {
+                                        setServicesModal(true);
+                                        setServiceDateId(service.PRO_id);
+                                        setServiceId(service.CPM_id);
+                                        setServiceName(service.CPM_nombre);
+                                    } else 
+                                        setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>deleteService(service.PRO_id)} 
+                                onClick={()=>{
+                                    if (estadoCita == 'Atendida')
+                                        deleteService(service.PRO_id)
+                                    else
+                                        setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
+                                }} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -272,6 +312,7 @@ export default function DateScreen () {
     const [nombresPaciente, setNombresPaciente] = useState('');
     const [nombresMedico, setNombresMedico] = useState('');
     const [fechaCita, setFechaCita] = useState('');
+    const [estadoCita, setEstadoCita] = useState('');
     // Datos procedimientos medicos
     const [servicesTable, setServicesTable] = useState([]);
     const [servicesModal, setServicesModal] = useState(false);
@@ -307,6 +348,18 @@ export default function DateScreen () {
         <div className="TitleContainer">
             <h1>Cita {nombresPaciente} con {nombresMedico} {fechaCita}</h1>
         </div>
+        <div className="TableDetailContainer">
+            <p>Estado: {estadoCita}</p>
+            <button
+                className='SearcherBtn' 
+                onClick={updateNextState}
+            >
+                {estadoCita == 'Programada' ? 'Atendida': 'Completada'}
+            </button>
+        </div>
+        <div className='messageContainer'>
+                <p>{mensaje}</p>
+        </div>
         <div className='TableDetailContainer'>
             <div className="TitleContainer">
                 <h2>Signos vitales</h2>
@@ -336,7 +389,15 @@ export default function DateScreen () {
         <div className='TableDetailContainer'>
             <div className="TitleContainer">
                 <h2>Procedimientos realizados</h2>
-                <i class="bi bi-plus-circle openModal" onClick={()=>setServicesModal(true)}/>
+                <i 
+                    class="bi bi-plus-circle openModal"
+                    onClick={()=>{
+                        if (estadoCita == 'Atendida') 
+                            setServicesModal(true);
+                        else 
+                        setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
+                    }}
+                />
             </div>
             <DataTable 
                 headers={servicesColumns} rows={servicesTable}
