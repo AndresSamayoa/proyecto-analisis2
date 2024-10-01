@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import Modal from 'react-modal';
 import moment from 'moment';
 import axios from 'axios';
@@ -253,6 +253,7 @@ export default function DateScreen () {
                 setNombresMedico(response.data.data.MED_nombres);
                 setFechaCita(response.data.data.CIT_fecha ? moment(response.data.data.CIT_fecha).format('DD-MM-YY HH:mm') : '')
                 setEstadoCita(response.data.data.CIT_estado);
+                setTotalCita(response.data.data.CIT_costo_total);
 
                 // Generate service table
                 for (const service of response.data.data.procedimientos) {
@@ -313,6 +314,7 @@ export default function DateScreen () {
     const [nombresMedico, setNombresMedico] = useState('');
     const [fechaCita, setFechaCita] = useState('');
     const [estadoCita, setEstadoCita] = useState('');
+    const [totalCita, setTotalCita] = useState(0);
     // Datos procedimientos medicos
     const [servicesTable, setServicesTable] = useState([]);
     const [servicesModal, setServicesModal] = useState(false);
@@ -356,6 +358,13 @@ export default function DateScreen () {
             >
                 {estadoCita == 'Programada' ? 'Atendida': 'Completada'}
             </button>
+            {
+                estadoCita === 'Completada' &&
+                <div>
+                    <p>Total a pagar: {totalCita}</p>
+                    <Link to='/' target='_blank'>Ver detalle del pago</Link>
+                </div>
+            }
         </div>
         <div className='messageContainer'>
                 <p>{mensaje}</p>
