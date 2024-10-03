@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
 import moment from 'moment';
+import Modal from 'react-modal';
 
 import WorkShiftForm from '../../components/WorkShiftForm/WorkShiftForm';
-import DataTable from '../../components/DataTable/DataTable';
+import TableModal from '../../components/TableModal/TableModal';
 
-const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
+const base_url = process.env.REACT_APP_NODE_API_BASE;
 
 export default function WorkShiftScreen () {
 
@@ -22,57 +23,30 @@ export default function WorkShiftScreen () {
     const searchMedics = async (param) => {
         try {
             const response = await axios({
-                url: base_url+'/Medicos/fas_buscar_medicos',
+                url: base_url+'/api/medicos/buscar',
                 method: 'GET',
                 params: {
-                    buscar: param
+                    parametro: param
                 },
                 validateStatus: () => true,
                 timeout: 30000
             });
 
-            if (response.status === 200) {
+            if (response.status === 200 && response.data.status) {
                 const data = [];
-                for (const patient of response.data) {
+                for (const patient of response.data.data) {
                     data.push({
-                        value: patient.meD_id,
-                        label: patient.meD_nombre + ' ' + patient.meD_apellido,
+                        value: patient.MED_id,
+                        label: patient.MED_nombre + ' ' + patient.MED_apellido,
                     });
                 }
 
                 setListaMedicos(data);
             } else {
-                setMensaje('Error al obtener los datos de clientes, codigo: ' + response.status);
+                setMensaje(`Error al obtener los datos de medico, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
-            setMensaje('Error al obtener los datos de clientes: ' + error.message);
-        }
-    }
-
-    const listMedics = async () => {
-        try {
-            const response = await axios({
-                url: base_url+'/Medicos/Read',
-                method: 'GET',
-                validateStatus: () => true,
-                timeout: 30000
-            });
-
-            if (response.status === 200) {
-                const data = [];
-                for (const patient of response.data) {
-                    data.push({
-                        value: patient.meD_id,
-                        label: patient.meD_nombre + ' ' + patient.meD_apellido,
-                    });
-                }
-
-                setListaMedicos(data);
-            } else {
-                setMensaje('Error al obtener los datos de clientes, codigo: ' + response.status);
-            }
-        } catch (error) {
-            setMensaje('Error al obtener los datos de clientes: ' + error.message);
+            setMensaje('Error al obtener los datos de de medico: ' + error.message);
         }
     }
 
@@ -96,6 +70,10 @@ export default function WorkShiftScreen () {
         setMensaje('');
         console.log('Limpio');
     };
+
+    const cerrarModalTabla = () => {
+        setIsTableModalOpen(false);
+    }
     
     const guardarForm = async () => {
         try {
@@ -105,10 +83,10 @@ export default function WorkShiftScreen () {
 
             if (turno > 0) {
                 method = 'PUT';
-                url = base_url + '/HORARIO/Update'
+                url = base_url + '/api/horarios/' + turno;
             } else {
                 method = 'POST';
-                url = base_url + '/HORARIO/Create'
+                url = base_url + '/api/horarios';
             }
 
             if (!medico || medico < 1) {
@@ -137,20 +115,19 @@ export default function WorkShiftScreen () {
                 url,
                 method,
                 data: {
-                    hoR_id: turno > 0 ? turno : turno,
-                    meD_id: medico,
-                    hoR_inicio: fechaInicio,
-                    hoR_fin: fechaFin,
-                    hoR_hora_inicio: horaInicio,
-                    hoR_hora_fin: horaFin,
-                    hoR_disponibilidad: disponible ? 1 : 0,
-                    hoR_lunes: lunes ? 1 : 0,
-                    hoR_martes: martes ? 1 : 0,
-                    hoR_miercorles: miercoles ? 1 : 0,
-                    hoR_jueves: jueves ? 1 : 0,
-                    hoR_viernes: viernes ? 1 : 0,
-                    hoR_sabado: sabado ? 1 : 0,
-                    hoR_domingo: domingo ? 1 : 0
+                    medi_id: medico,
+                    hora_inicio: fechaInicio,
+                    hora_fin: fechaFin,
+                    hora_hora_inicio: horaInicio,
+                    hora_hora_fin: horaFin,
+                    hora_disponibilidad: disponible ? 1 : 0,
+                    hora_lunes: lunes ? 1 : 0,
+                    hora_martes: martes ? 1 : 0,
+                    hora_miercoles: miercoles ? 1 : 0,
+                    hora_jueves: jueves ? 1 : 0,
+                    hora_viernes: viernes ? 1 : 0,
+                    hora_sabado: sabado ? 1 : 0,
+                    hora_domingo: domingo ? 1 : 0
                   },
                 validateStatus: () => true
             });
@@ -158,35 +135,31 @@ export default function WorkShiftScreen () {
             if (response.status == 200) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
-                await loadTableData();
             } else {
-                setMensaje('Error al guardar, codigo: ' + response.status);
+                setMensaje(`Error al guardar los datos, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensaje('Error al guardar los datos: ' + error.message);
         }
     };
 
-    const eliminarItem = async (turnoId) => {
+    const eliminarItem = async (turnoId, buscador, setMensajeParam) => {
         try {
             const response = await axios({
-                url: base_url + '/HORARIO/Delete',
+                url: base_url + '/api/horarios/' + turnoId,
                 method: 'DELETE',
-                params: {
-                    Id: turnoId
-                },
                 validateStatus: () => true
             });
 
             if (response.status == 200) {
                 cancelarForm();
-                setMensaje('Exito al eliminar');
-                await loadTableData();
+                setMensajeParam('Exito al eliminar');
+                buscarData(buscador, setMensajeParam);
             } else {
-                setMensaje('Error al eliminar, codigo: ' + response.status);
+                setMensajeParam('Error al eliminar, codigo: ' + response.status);
             }
         } catch (error) {
-            setMensaje('Error al eliminar el horario: ' + error.message);
+            setMensajeParam('Error al eliminar el horario: ' + error.message);
         }
     };
 
@@ -249,17 +222,83 @@ export default function WorkShiftScreen () {
                 }
 
                 setTableData(data);
-                listMedics();
             } else {
-                setMensaje('Error al obtener los datos de la tabla, codigo: ' + response.status);
+                setMensaje(`Error al obtener los datos de la tabla, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensaje('Error al obtener los datos de la tabla: ' + error.message);
         }
     };
 
-    const buscarData = () => {
-        console.log(buscador)
+    const buscarData = async (buscador, setMensajeParam) => {
+        try {
+            const response = await axios({
+                url: base_url+'/api/horarios/buscar',
+                method: 'GET',
+                params: {
+                    parametro: buscador
+                },
+                validateStatus: () => true,
+                timeout: 30000
+            });
+
+            if (response.status == 200 && response.data.status) {
+                const data = [];
+                for (const workShift of response.data.data) {
+                    data.push({
+                        id: workShift.HOR_id,
+                        nombre_medico: workShift.MED_nombre + ' ' + workShift.MED_apellido,
+                        horario: String(workShift.HOR_hora_inicio) + '-' + String(workShift.HOR_hora_fin),
+                        fecha_inicio: workShift.HOR_inicio ? moment(workShift.HOR_inicio).format('DD-MM-YYYY') : '',
+                        fecha_fin: workShift.HOR_fin ? moment(workShift.HOR_fin).format('DD-MM-YYYY') : '',
+                        disponible: workShift.HOR_disponibilidad ? 'Si' : 'No',
+                        dias: (
+                            (workShift.HOR_lunes ? 'lunes ' : '') +  
+                            (workShift.HOR_martes ? 'martes ' : '') +  
+                            (workShift.HOR_miercoles ? 'miercoles ' : '') +  
+                            (workShift.HOR_jueves ? 'jueves ' : '') +  
+                            (workShift.HOR_viernes ? 'viernes ' : '') +  
+                            (workShift.HOR_sabado ? 'sabado ' : '') +  
+                            (workShift.HOR_domingo ? 'domingo' : '')
+                        ),
+                        acciones: <div className='ActionContainer'>
+                            <i 
+                                onClick={()=>{
+                                    setTurno(workShift.HOR_id);
+                                    setBuscadorMedico(workShift.MED_nombre + ' ' + workShift.MED_apellido);
+                                    setMedico(workShift.MED_id);
+                                    setHoraInicio(String(workShift.HOR_hora_inicio));
+                                    setHoraFin(String(workShift.HOR_hora_fin));
+                                    setFechaInicio(workShift.HOR_inicio ? moment(workShift.HOR_inicio).format('YYYY-MM-DD') : '');
+                                    setFechaFin(workShift.HOR_fin ? moment(workShift.HOR_fin).format('YYYY-MM-DD') : '');
+                                    setDisponible(!!workShift.HOR_disponibilidad);
+                                    setLunes(!!workShift.HOR_lunes);
+                                    setMartes(!!workShift.HOR_martes);
+                                    setMiercoles(!!workShift.HOR_miercoles);
+                                    setJueves(!!workShift.HOR_jueves);
+                                    setViernes(!!workShift.HOR_viernes);
+                                    setSabado(!!workShift.HOR_sabado);
+                                    setDomingo(!!workShift.HOR_domingo);
+                                    setIsTableModalOpen(false);
+                                }} 
+                                class="bi bi-pencil-square ActionItem"
+                            ></i>
+                            <i
+                                onClick={()=>eliminarItem(workShift.HOR_id, buscador, setMensajeParam)} 
+                                style={{color:"red"}} 
+                                class="bi bi-trash ActionItem"
+                            ></i>
+                        </div>
+                    });
+                }
+
+                setTableData(data);
+            } else {
+                setMensajeParam(`Error al obtener los datos de la tabla, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
+            }
+        } catch (error) {
+            setMensajeParam('Error al obtener los datos de la tabla: ' + error.message);
+        }
     }
 
 
@@ -281,15 +320,12 @@ export default function WorkShiftScreen () {
     const [sabado, setSabado] = useState(false);
     const [domingo, setDomingo] = useState(false);
     const [buscador, setBuscador] = useState('');
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     const [mensaje, setMensaje] = useState('');
-    
-    useEffect(()=>loadTableData, []);
 
     useEffect(()=> {
         if (buscadorMedico.length > 0) {
             searchMedics(buscadorMedico);
-        } else {
-            listMedics()
         }
         }, 
         [buscadorMedico]
@@ -298,6 +334,7 @@ export default function WorkShiftScreen () {
     return <div className='CRUDBasicScreen'>
         <div className="TitleContainer">
             <h1>Turnos</h1>
+            <i class="bi bi-search openModal" onClick={()=> setIsTableModalOpen(true)}/>
         </div>
         <WorkShiftForm 
             cancelarFn={cancelarForm}
@@ -335,13 +372,23 @@ export default function WorkShiftScreen () {
             setDomingo={setDomingo}
             setDisponible={setDisponible}
         />
-        {/* <Searcher 
-            placeHolder='Nombre o CUI'
+        <Modal
+            isOpen={isTableModalOpen}
+            onRequestClose={cerrarModalTabla}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
 
-            param={buscador}
-            setParam={setBuscador}
-            searchFn={buscarData}
-        /> */}
-        <DataTable headers={tableColumns} rows={tableData} />
+        >
+            <TableModal 
+                closeModal={() => setIsTableModalOpen(false)}
+
+                setTableData={setTableData}
+                buscarData={buscarData}
+
+                placeHolder='Nombre o CUI del medico'
+                tableColumns={tableColumns}
+                tableData={tableData}
+            />
+        </Modal>
     </div>
 }
