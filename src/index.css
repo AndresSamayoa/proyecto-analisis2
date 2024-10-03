@@ -234,6 +234,7 @@ input[type="date"]::-webkit-input-placeholder{
   min-width: 100px;
   max-width: 500px;
   flex-basis: 100%;
+  padding: 0 10px;
 }
 
 .dTableHeaderStartItem {

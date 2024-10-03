@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import Modal from 'react-modal';
 import moment from 'moment';
@@ -7,10 +7,13 @@ import axios from 'axios';
 import DataTable from '../../components/DataTable/DataTable';
 import MedicalServiceDateForm from '../../components/MedicalServiceDateForm/MedicalServiceDateForm';
 import VitalSignsForm from '../../components/VitalSignsForm/VitalSignsForm';
+import DiagnosticDateForm from '../../components/DiagnosticForm/DiagnosticForm';
+import PrescriptionDiagnosticScreen from '../PrescriptionDiagnosticScreen/PrescriptionDiagnosticScreen';
 
 const base_url = process.env.REACT_APP_NODE_API_BASE;
 
 export default function DateScreen () {
+    Modal.setAppElement('#root');
     const location = useLocation();
     const citaId = location.state.citaId;
 
@@ -18,8 +21,14 @@ export default function DateScreen () {
         {field: 'nombre', text: 'Nombre'},
         {field: 'valor', text: 'Valor'},
         {field: 'acciones', text: 'Acciones'},
-    ]
-    
+    ];
+
+    const diagnosticColumns = [
+        {field: 'enfermedad', text: 'Enfermedad'},
+        {field: 'observaciones', text: 'Observaciones'},
+        {field: 'acciones', text: 'Acciones'},
+    ];
+
     const clearService = () => {
         setServiceDateId(0);
         setServiceId(0);
@@ -27,9 +36,27 @@ export default function DateScreen () {
         setListaServicios([]);
     }
 
+    const clearDiagnostics = () => {
+        setDiagnosticId(0);
+        setDiagnosticComentary('');
+        setDiseaseId(0);
+        setDiseaseName(0);
+        setDiseaseList([]);
+    }
+
     const closeServiceModal = () => {
         clearService();
         setServicesModal(false);
+    }
+    
+    const closeDiagnosticsModal = () => {
+        clearDiagnostics();
+        setDiagnosticsModal(false);
+    }
+    
+    const closePrescriptionModal = () => {
+        setPrescriptionId(0);
+        setPrescriptionModal(false);
     }
 
     const saveService = async () => {
@@ -75,6 +102,53 @@ export default function DateScreen () {
             }
         } catch (error) {
             setServiceMessage('Error al guardar los datos: ' + error.message);
+        }
+    }
+
+    const saveDiagnostic = async () => {
+        try {
+            const errores = [];
+            let method;
+            let url;
+
+            if (diagnosticId > 0) {
+                method = 'PUT';
+                url = base_url + '/api/diagnosticos/'+diagnosticId
+            } else {
+                method = 'POST';
+                url = base_url + '/api/diagnosticos'
+            }
+
+            if (!diseaseId || diseaseId < 1) {
+                errores.push('La enfermedad es un campo obligatorio.');
+            }
+
+            if (errores.length > 0) {
+                let mensajeError = errores.join(' ');
+                setServiceMessage(mensajeError)
+                return ;
+            }
+
+            const response = await axios({
+                url,
+                method,
+                data: {
+                    cita_id: citaId,
+                    enfer_id: diseaseId,
+                    diag_observacion: diagnosticCommentary,
+                  },
+                validateStatus: () => true
+            });
+
+            if (response.status == 200 && response.data.status) {
+                clearDiagnostics();
+                getDateInfo();
+                setDiagnosticsMessage('Exito al guardar');
+            } else {
+                setDiagnosticsMessage(`Error al guardar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
+            }
+        } catch (error) {
+            setDiagnosticsMessage('Error al guardar los datos: ' + error.message);
         }
     }
 
@@ -181,6 +255,26 @@ export default function DateScreen () {
             setMensaje('Error al eliminar la cita: ' + error.message);
         }
     }
+    
+    const deleteDiagnostic = async (diagnosticId) => {
+        try {
+            const response = await axios({
+                url: base_url + '/api/diagnosticos/'+diagnosticId,
+                method: 'DELETE',
+                validateStatus: () => true
+            });
+
+            if (response.status == 200 && response.data.status) {
+                clearDiagnostics();
+                setMensaje('Exito al eliminar');
+                getDateInfo();
+            } else {
+                setMensaje(`'Error al eliminar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
+            }
+        } catch (error) {
+            setMensaje('Error al eliminar la cita: ' + error.message);
+        }
+    }
 
     const searchService = async () => {
         try {
@@ -204,6 +298,35 @@ export default function DateScreen () {
                 }
 
                 setListaServicios(data);
+            }
+        } catch (error) {
+            console.log('Error al obtener los datos de clientes: ' + error.message);
+        }
+    }
+
+    const searchDisease = async () => {
+        try {
+            const response = await axios({
+                url: `${base_url}/api/Enfermedades/buscar`,
+                method: 'GET',
+                params: {
+                    parametro: diseaseName
+                },
+                validateStatus: () => true,
+                timeout: 30000
+            });
+
+            if (response.status === 200 && response.data.status) {
+                const data = [];
+                for (const disease of response.data.data) {
+                    data.push({
+                        value: disease.ENF_id,
+                        label: disease.ENF_nombre,
+                    });
+                }
+
+                console.log(data)
+                setDiseaseList(data);
             }
         } catch (error) {
             console.log('Error al obtener los datos de clientes: ' + error.message);
@@ -237,6 +360,45 @@ export default function DateScreen () {
         }
     }
 
+    const createPrescription = async (diagnostic) => {
+        try {
+            if (estadoCitaCall.current != 'Atendida') {
+                return setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
+            }
+
+            console.log(diagnostic)
+
+            const response = await axios({
+                url: base_url + '/api/receta',
+                method: 'POST',
+                data: {
+                    DIA_id: diagnostic,
+                  },
+                validateStatus: () => true
+            });
+
+            if (response.status == 200 && response.data.status) {
+                getDateInfo();
+                return {
+                    status: true,
+                    id: response.data.data.REC_id,
+                };
+            } else {
+                setMensaje(`Error al crear la receta, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
+                return {
+                    status: false,
+                    id: 0,
+                }
+            }
+        } catch (error) {
+            setMensaje('Error al crear la receta: ' + error.message);
+            return {
+                status: false,
+                id: 0,
+            }
+        }
+    }
+
     const getDateInfo = async () => {
         try {
             const response = await axios({
@@ -248,11 +410,13 @@ export default function DateScreen () {
 
             if (response.status == 200 && response.data.status) {
                 const servicesData = [];
+                const diagnosticsData = [];
 
                 setNombresPaciente(response.data.data.PAC_nombres);
                 setNombresMedico(response.data.data.MED_nombres);
                 setFechaCita(response.data.data.CIT_fecha ? moment(response.data.data.CIT_fecha).format('DD-MM-YY HH:mm') : '')
                 setEstadoCita(response.data.data.CIT_estado);
+                estadoCitaCall.current = response.data.data.CIT_estado
                 setTotalCita(response.data.data.CIT_costo_total);
 
                 // Generate service table
@@ -263,7 +427,7 @@ export default function DateScreen () {
                         acciones: <div className='ActionContainer'>
                             <i 
                                 onClick={()=>{
-                                    if (estadoCita == 'Atendida') {
+                                    if (estadoCitaCall.current == 'Atendida') {
                                         setServicesModal(true);
                                         setServiceDateId(service.PRO_id);
                                         setServiceId(service.CPM_id);
@@ -275,7 +439,7 @@ export default function DateScreen () {
                             ></i>
                             <i
                                 onClick={()=>{
-                                    if (estadoCita == 'Atendida')
+                                    if (estadoCitaCall.current == 'Atendida')
                                         deleteService(service.PRO_id)
                                     else
                                         setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
@@ -301,11 +465,62 @@ export default function DateScreen () {
                     setPeso(response.data.data.signosVitales.SIG_peso);
                     setEstatura(response.data.data.signosVitales.SIG_estatura);
                 }
+
+                for (const diagnostic of response.data.data.diagnosticos) {
+                    diagnosticsData.push({
+                        enfermedad: diagnostic.Enfermedad,
+                        observaciones: diagnostic.Observacion,
+                        acciones: <div className='ActionContainer'>
+                            <i 
+                                onClick={()=>{
+                                    if (estadoCitaCall.current == 'Atendida') {
+                                        setDiagnosticsModal(true);
+                                        setDiagnosticId(diagnostic.DiagnosticoId);
+                                        setDiagnosticComentary(diagnostic.Observacion);
+                                        setDiseaseId(diagnostic.EnfermedadId);
+                                        setDiseaseName(diagnostic.Enfermedad);
+                                    } else 
+                                        setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
+                                }} 
+                                class="bi bi-pencil-square ActionItem"
+                            ></i>
+                            <i onClick={async ()=>{
+                                    if (estadoCitaCall.current == 'Atendida'){
+                                        console.log(diagnostic.RecetaId);
+                                        let prescription = diagnostic.RecetaId
+                                        if (prescription <= 0) {
+                                            const prescriptionCreated = await createPrescription(diagnostic.DiagnosticoId);
+                                            if (!prescription.status) return ;
+                                            prescription = prescriptionCreated.id;
+                                        }
+                                        setPrescriptionId(prescription);
+                                        setPrescriptionModal(true);
+                                    } else
+                                        setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
+                                }}
+                                class="bi bi-prescription2 ActionItem" 
+                                style={{color:"blue"}}
+                            ></i>
+                            <i
+                                onClick={()=>{
+                                    if (estadoCitaCall.current == 'Atendida')
+                                        deleteDiagnostic(diagnostic.DiagnosticoId)
+                                    else
+                                        setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
+                                }} 
+                                style={{color:"red"}} 
+                                class="bi bi-trash ActionItem"
+                            ></i>
+                        </div>
+                    });
+                }
+
+                setDiagnosticsTable(diagnosticsData);
             } else {
                 setMensaje(`Error al obtener los datos de la pantalla, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
-            setMensaje('Error al obtener los datos de la la pantalla: ' + error.message);
+            setMensaje('Error al obtener los datos de la pantalla: ' + error.message);
         }
     }
 
@@ -315,6 +530,7 @@ export default function DateScreen () {
     const [fechaCita, setFechaCita] = useState('');
     const [estadoCita, setEstadoCita] = useState('');
     const [totalCita, setTotalCita] = useState(0);
+    const estadoCitaCall = useRef('');
     // Datos procedimientos medicos
     const [servicesTable, setServicesTable] = useState([]);
     const [servicesModal, setServicesModal] = useState(false);
@@ -324,15 +540,27 @@ export default function DateScreen () {
     const [listaServicios, setListaServicios] = useState([]);
     const [serviceMessage, setServiceMessage] = useState('');
     // Signos vitales
-    const [signoVitalId, setSignoVitalId] = useState(0)
-    const [presionArterial, setPresionArterial] = useState('')
-    const [temperatura, setTemperatura] = useState('')
-    const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState('')
-    const [respiraciones, setRespiraciones] = useState('')
-    const [so2, setSo2] = useState('')
-    const [glucosa, setGlucosa] = useState('')
-    const [peso, setPeso] = useState('')
-    const [estatura, setEstatura] = useState('')
+    const [signoVitalId, setSignoVitalId] = useState(0);
+    const [presionArterial, setPresionArterial] = useState('');
+    const [temperatura, setTemperatura] = useState('');
+    const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState('');
+    const [respiraciones, setRespiraciones] = useState('');
+    const [so2, setSo2] = useState('');
+    const [glucosa, setGlucosa] = useState('');
+    const [peso, setPeso] = useState('');
+    const [estatura, setEstatura] = useState('');
+    // Diagnosticos
+    const [diagnosticsTable, setDiagnosticsTable] = useState([]);
+    const [diagnosticsModal, setDiagnosticsModal] = useState(false);
+    const [diagnosticId, setDiagnosticId] = useState(0);
+    const [diagnosticCommentary, setDiagnosticComentary] = useState('');
+    const [diseaseId, setDiseaseId] = useState(0);
+    const [diseaseName, setDiseaseName] = useState('');
+    const [diseaseList, setDiseaseList] = useState([]);
+    const [diagnosticsMessage, setDiagnosticsMessage] = useState('');
+    // Receta
+    const [prescriptionId, setPrescriptionId] = useState(0);
+    const [prescriptionModal, setPrescriptionModal] = useState(false);
     // General pantalla
     const [mensaje, setMensaje] = useState('');
 
@@ -342,9 +570,21 @@ export default function DateScreen () {
 
     useEffect(()=>{
         if (serviceName.length > 0) {
-            searchService()
+            searchService();
+        } else {
+            setListaServicios([]);
         }
     }, [serviceName]);
+
+    useEffect(()=>{
+        if (diseaseName.length > 0) {
+            searchDisease();
+        } else {
+            setDiseaseList([]);
+        }
+    }, [diseaseName]);
+
+    useEffect(()=> console.log(estadoCita), [estadoCita])
 
     return <div className='CRUDBasicScreen'>
         <div className="TitleContainer">
@@ -352,12 +592,14 @@ export default function DateScreen () {
         </div>
         <div className="TableDetailContainer">
             <p>Estado: {estadoCita}</p>
-            <button
-                className='SearcherBtn' 
-                onClick={updateNextState}
-            >
-                {estadoCita == 'Programada' ? 'Atendida': 'Completada'}
-            </button>
+            {estadoCita !== 'Completada' && 
+                <button
+                    className='SearcherBtn' 
+                    onClick={updateNextState}
+                >
+                    {estadoCita == 'Programada' ? 'Atendida': 'Completada'}
+                </button> 
+            }
             {
                 estadoCita === 'Completada' &&
                 <div>
@@ -412,6 +654,23 @@ export default function DateScreen () {
                 headers={servicesColumns} rows={servicesTable}
             />
         </div>
+        <div className='TableDetailContainer'>
+            <div className="TitleContainer">
+                <h2>Diagnosticos</h2>
+                <i 
+                    class="bi bi-plus-circle openModal"
+                    onClick={()=>{
+                        if (estadoCita == 'Atendida') 
+                            setDiagnosticsModal(true);
+                        else 
+                        setMensaje('No se puede modificar la cita si no ha sido atendida o fue cerrada.');
+                    }}
+                />
+            </div>
+            <DataTable 
+                headers={diagnosticColumns} rows={diagnosticsTable}
+            />
+        </div>
         <Modal
             isOpen={servicesModal}
             onRequestClose={closeServiceModal}
@@ -432,6 +691,48 @@ export default function DateScreen () {
 
                     guardarFn={saveService}
                     cancelarFn={clearService}
+                />
+            </div>
+        </Modal>
+        <Modal
+            isOpen={diagnosticsModal}
+            onRequestClose={closeDiagnosticsModal}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
+        >
+            <div className='modalDiv'>
+                <div className='closeModalDiv'>
+                    <i onClick={closeDiagnosticsModal} class="bi bi-x closeIcon" />
+                </div>
+                <DiagnosticDateForm 
+                    setBuscadorEnfermedad={setDiseaseName}
+                    buscadorEnfermedad={diseaseName}
+                    listaEnfermedad={diseaseList}
+                    setEnfermedad={setDiseaseId}
+
+                    setComentario={setDiagnosticComentary}
+
+                    comentario={diagnosticCommentary}
+
+                    mensaje={diagnosticsMessage}
+
+                    guardarFn={saveDiagnostic}
+                    cancelarFn={clearDiagnostics}
+                />
+            </div>
+        </Modal>
+        <Modal
+            isOpen={prescriptionModal}
+            onRequestClose={closePrescriptionModal}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
+        >
+            <div className='modalDiv'>
+                <div className='closeModalDiv'>
+                    <i onClick={closePrescriptionModal} class="bi bi-x closeIcon" />
+                </div>
+                <PrescriptionDiagnosticScreen 
+                    prescriptionId={prescriptionId}
                 />
             </div>
         </Modal>
