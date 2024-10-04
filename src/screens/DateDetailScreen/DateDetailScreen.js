@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Modal from 'react-modal';
 import moment from 'moment';
 import axios from 'axios';
@@ -29,6 +29,11 @@ export default function DateScreen () {
         {field: 'acciones', text: 'Acciones'},
     ];
 
+    const dateDetailsColumns = [
+        {field: 'nombre', text: 'Nombre'},
+        {field: 'valor', text: 'Valor'},
+    ];
+
     const clearService = () => {
         setServiceDateId(0);
         setServiceId(0);
@@ -47,6 +52,11 @@ export default function DateScreen () {
     const closeServiceModal = () => {
         clearService();
         setServicesModal(false);
+    }
+    
+    const closeDateDetailModal = () => {
+        setListaDetallesCita([]);
+        setListaDetallesCitaModal(false);
     }
     
     const closeDiagnosticsModal = () => {
@@ -333,6 +343,37 @@ export default function DateScreen () {
         }
     }
 
+    const openDateDetailModal = async () => {
+        try {
+            const response = await axios({
+                url: base_url+'/api/citas/detalle/pago/'+citaId,
+                method: 'GET',
+                validateStatus: () => true,
+                timeout: 30000
+            });
+
+            if (response.status == 200 && response.data.status) {
+                setListaDetallesCitaModal(true);
+                const details = [];
+                let total = 0;
+
+                for (const detail of response.data.data) {
+                    details.push({nombre: detail.nombre, valor:detail.valor ? detail.valor.toFixed(2) : 'N.A' })
+
+                    total += detail.valor ? detail.valor : 0;
+                }
+
+                details.push({nombre: 'Total', valor: total})
+
+                setListaDetallesCita(details);
+            } else {
+                setMensaje(`Error al obtener los datos de la la cita, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
+            }
+        } catch (error) {
+            setMensaje('Error al obtener los datos de la cita: ' + error.message);
+        }
+    }
+
     const updateNextState = async () => {
         try {
             let url;
@@ -531,6 +572,9 @@ export default function DateScreen () {
     const [estadoCita, setEstadoCita] = useState('');
     const [totalCita, setTotalCita] = useState(0);
     const estadoCitaCall = useRef('');
+    // Datos detalle cita
+    const [listaDetallesCita, setListaDetallesCita] = useState([]);
+    const [listaDetallesCitaModal, setListaDetallesCitaModal] = useState(false);
     // Datos procedimientos medicos
     const [servicesTable, setServicesTable] = useState([]);
     const [servicesModal, setServicesModal] = useState(false);
@@ -602,9 +646,14 @@ export default function DateScreen () {
             }
             {
                 estadoCita === 'Completada' &&
-                <div>
-                    <p>Total a pagar: {totalCita}</p>
-                    <Link to='/' target='_blank'>Ver detalle del pago</Link>
+                <div className="TableDetailContainer">
+                    <p>Total a pagar: Q.{totalCita.toFixed(2)}</p>
+                    <button
+                        className='SearcherBtn' 
+                        onClick={openDateDetailModal}
+                    >
+                        Ver detalle
+                    </button> 
                 </div>
             }
         </div>
@@ -734,6 +783,24 @@ export default function DateScreen () {
                 <PrescriptionDiagnosticScreen 
                     prescriptionId={prescriptionId}
                 />
+            </div>
+        </Modal>
+        <Modal
+            isOpen={listaDetallesCitaModal}
+            onRequestClose={closeDateDetailModal}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
+        >
+            <div className='modalDiv'>
+                <div className='closeModalDiv'>
+                    <i onClick={closeDateDetailModal} class="bi bi-x closeIcon" />
+                </div>
+                <div className='TableModalComponent'>
+                    <h1>Detalle de pago</h1>
+                    <DataTable 
+                        headers={dateDetailsColumns} rows={listaDetallesCita}
+                    />
+                </div>
             </div>
         </Modal>
     </div>
