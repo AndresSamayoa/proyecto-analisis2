@@ -6,7 +6,7 @@ import axios from 'axios';
 import MedicationForm from '../../components/MedicationForm/MedicationForm';
 import TableModal from '../../components/TableModal/TableModal';
 
-const base_url = process.env.REACT_APP_DOT_NET_API_BASE;
+const base_url = process.env.REACT_APP_NODE_API_BASE;
 
 
 export default function MedicationScreen (props) {
@@ -21,6 +21,7 @@ export default function MedicationScreen (props) {
         setMedicamentoId(0)
         setNombre('')
         setDescripcion('')
+        setPrecio(0)
         setMensaje('')
         console.log('Limpio');
     };
@@ -33,10 +34,10 @@ export default function MedicationScreen (props) {
 
             if (medicamentoId > 0) {
                 method = 'PUT';
-                url = base_url + '/Medicamentos/Update'
+                url = base_url + '/api/medicamentos/'+medicamentoId
             } else {
                 method = 'POST';
-                url = base_url + '/Medicamentos/Create'
+                url = base_url + '/api/medicamentos'
             }
 
             if (!nombre || nombre.trim().length < 1) {
@@ -56,19 +57,19 @@ export default function MedicationScreen (props) {
                 url,
                 method,
                 data: {
-                    meD_id: medicamentoId ? medicamentoId : 0,
-                    meD_nombre_medicamento: nombre.trim(),
-                    meD_descripcion: descripcion.trim()
+                    nombre_medicamento: nombre.trim(),
+                    descripcion: descripcion.trim(),
+                    med_precio: Number(precio).toFixed(2)
                 },
                 validateStatus: () => true
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 cancelarForm();
                 setMensaje('Exito al guardar');
                 setTableData([]);
             } else {
-                setMensaje('Error al guardar, codigo: ' + response.status);
+                setMensaje(`Error al guardar, codigo:  ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMensaje('Error al guardar los datos: ' + error.message);
@@ -78,20 +79,17 @@ export default function MedicationScreen (props) {
     const eliminarItem = async (medicamentoId, searchParam, setMessageParam) => {
         try {
             const response = await axios({
-                url: base_url + '/Medicamentos/Delete',
+                url: base_url + '/api/medicamentos/' + medicamentoId,
                 method: 'DELETE',
-                params: {
-                    Id: medicamentoId
-                },
                 validateStatus: () => true
             });
 
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status) {
                 cancelarForm();
                 setMessageParam('Exito al eliminar');
                 await buscarData(searchParam, setMessageParam);
             } else {
-                setMessageParam('Error al eliminar, codigo: ' + response.status);
+                setMessageParam(`Error al eliminar, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMessageParam('Error al eliminar el cliente: ' + error.message);
@@ -101,34 +99,34 @@ export default function MedicationScreen (props) {
     const buscarData = async (param, setMessageParam) => {
         try {
             const response = await axios({
-                url: base_url+'/Medicamentos/fas_buscar_medicamentos',
+                url: base_url+'/api/medicamentos/buscar',
                 method: 'GET',
                 params:{
-                    buscar: param 
+                    parametro: param 
                 },
                 validateStatus: () => true,
                 timeout: 30000
             });
 
-            if (response.status == 200) {
+            if (response.status === 200 && response.data.status) {
                 const data = [];
-                for (const medication of response.data) {
+                for (const medication of response.data.data) {
                     data.push({
-                        id: medication.meD_id,
-                        nombre: medication.meD_nombre_medicamento,
-                        descripcion: medication.meD_descripcion,
+                        id: medication.MED_id,
+                        nombre: medication.MED_nombre_medicamento,
+                        descripcion: medication.MED_descripcion,
                         acciones: <div className='ActionContainer'>
                             <i 
                                 onClick={()=>{
-                                    setMedicamentoId(medication.meD_id);
-                                    setNombre(medication.meD_nombre_medicamento);
-                                    setDescripcion(medication.meD_descripcion);
+                                    setMedicamentoId(medication.MED_id);
+                                    setNombre(medication.MED_nombre_medicamento);
+                                    setDescripcion(medication.MED_descripcion);
                                     setIsTableModalOpen(false);
                                 }} 
                                 class="bi bi-pencil-square ActionItem"
                             ></i>
                             <i
-                                onClick={()=>eliminarItem(medication.meD_id, param, setMessageParam)} 
+                                onClick={()=>eliminarItem(medication.MED_id, param, setMessageParam)} 
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
@@ -138,7 +136,7 @@ export default function MedicationScreen (props) {
 
                 setTableData(data);
             } else {
-                setMessageParam('Error al obtener los datos de la tabla, codigo: ' + response.status);
+                setMessageParam(`Error al obtener los datos de la tabla, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
             }
         } catch (error) {
             setMessageParam('Error al obtener los datos de la tabla: ' + error.message);
@@ -153,6 +151,7 @@ export default function MedicationScreen (props) {
     const [medicamentoId, setMedicamentoId] = useState(0);
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
+    const [precio, setPrecio] = useState(0);
     const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     const [mensaje, setMensaje] = useState('');
 
@@ -167,10 +166,12 @@ export default function MedicationScreen (props) {
 
             nombre={nombre}
             descripcion={descripcion}
+            precio={precio}
             mensaje={mensaje}
 
             setNombre={setNombre}
             setDescripcion={setDescripcion}
+            setPrecio={setPrecio}
         />
         <Modal
             isOpen={isTableModalOpen}

@@ -8,6 +8,10 @@ export default function MedicationForm(props) {
     const setDescripcion = (e) => {
         props.setDescripcion(e.target.value)
     };
+    
+    const setPrecio = (e) => {
+        props.setPrecio(e.target.value)
+    };
 
     return <div className='crudForm'>
         <div className="crudInputs">
@@ -15,6 +19,12 @@ export default function MedicationForm(props) {
                 <span className="controlLabel">Nombre</span>
                 <div className="inputSecundaryContainer">
                     <input type="text" className="textInput" value={props.nombre} onChange={setNombre}/>
+                </div>
+            </div>
+            <div className="controlContainer">
+                <span className="controlLabel">Precio</span>
+                <div className="inputSecundaryContainer">
+                    <input type="number" className="textInput" value={props.precio} onChange={setPrecio}/>
                 </div>
             </div>
             <div className="controlContainerWide">
