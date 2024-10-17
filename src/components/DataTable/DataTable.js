@@ -25,7 +25,7 @@ export default function DataTable(props) {
                 rows.push(<tr key={`tr-${i}`} className={`dTableRows dTableRow${i%2}${type}`}>{rowComponents}</tr>);
             }
 
-            return <table className='dTable'> 
+            return <table className={`dTable${props.wide ? 'Wide' : '' }`}> 
                 <thead className='dTableHeader'>{headers}</thead>
                 {rows}
             </table>;

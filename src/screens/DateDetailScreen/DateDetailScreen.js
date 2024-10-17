@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Modal from 'react-modal';
 import moment from 'moment';
 import axios from 'axios';
@@ -14,8 +14,7 @@ const base_url = process.env.REACT_APP_NODE_API_BASE;
 
 export default function DateScreen () {
     Modal.setAppElement('#root');
-    const location = useLocation();
-    const citaId = location.state.citaId;
+    const {citaId} = useParams();
 
     const servicesColumns = [
         {field: 'nombre', text: 'Nombre'},
@@ -647,13 +646,24 @@ export default function DateScreen () {
             {
                 estadoCita === 'Completada' &&
                 <div className="TableDetailContainer">
+                     <Link
+                        to={'/date/summary/'+citaId}
+                        target='_blank'
+                        className='LinkButtonContainer'
+                    >
+                    <button
+                        className='LinkButtonItem' 
+                    >
+                        Ficha medica
+                    </button>
+                    </Link>
                     <p>Total a pagar: Q.{totalCita.toFixed(2)}</p>
                     <button
                         className='SearcherBtn' 
                         onClick={openDateDetailModal}
                     >
                         Ver detalle
-                    </button> 
+                    </button>
                 </div>
             }
         </div>
@@ -797,6 +807,7 @@ export default function DateScreen () {
                 </div>
                 <div className='TableModalComponent'>
                     <h1>Detalle de pago</h1>
+                    <h2>No. factura #{citaId}</h2>
                     <DataTable 
                         headers={dateDetailsColumns} rows={listaDetallesCita}
                     />

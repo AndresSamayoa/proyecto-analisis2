@@ -18,6 +18,7 @@ export default function Header () {
             <Link to='/workShifts/crud' className='headerLink'><b>Turnos</b></Link>
             <Link to='/medications/crud' className='headerLink'><b>Medicinas</b></Link>
             <Link to='/diseases/crud' className='headerLink'><b>Enfermedades</b></Link>
+            <Link to='/reports' className='headerLink'><b>Reportes</b></Link>
         </div>
     </div>
 }
