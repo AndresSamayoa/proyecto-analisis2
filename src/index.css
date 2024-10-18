@@ -234,12 +234,12 @@ input[type="date"]::-webkit-input-placeholder{
   align-items: center;
   justify-content: center;
   word-wrap: break-word;
+  word-break: break-all;
   border: solid;
   border-width: 1px;
   min-width: 100px;
   max-width: 500px;
   flex-basis: 100%;
-  padding: 10px 10px;
 }
 
 .dTableHeaderStartItem {
@@ -266,13 +266,13 @@ input[type="date"]::-webkit-input-placeholder{
   align-items: center;
   justify-content: center;
   word-wrap: break-word;
+  word-break: break-all;
   text-align: center;
   border: solid;
   min-width: 100px;
   max-width: 500px;
   border-width: 1px;
   flex-basis: 100%;
-  padding: 10px 10px;
 }
 
 .dTableRow0Screen {
