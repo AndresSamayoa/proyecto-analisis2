@@ -809,7 +809,7 @@ export default function DateScreen () {
                     <h1>Detalle de pago</h1>
                     <h2>No. factura #{citaId}</h2>
                     <DataTable 
-                        headers={dateDetailsColumns} rows={listaDetallesCita}
+                        headers={dateDetailsColumns} rows={listaDetallesCita} wide={true}
                     />
                 </div>
             </div>

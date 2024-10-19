@@ -4,9 +4,13 @@ export default function MedicalServicesForm(props) {
     const setNombre = (e) => {
         props.setNombre(e.target.value)
     };
+    
+    const setPrecio = (e) => {
+        props.setPrecio(e.target.value)
+    };
 
-    const setActivo = (e) => {
-        props.setActivo(e.target.checked)
+    const setExamen = (e) => {
+        props.setExamen(e.target.checked)
     };
 
     const setLocal = (e) => {
@@ -22,9 +26,15 @@ export default function MedicalServicesForm(props) {
                 </div>
             </div>
             <div className="controlContainer">
-                <span className="controlLabel">Activo</span>
+                <span className="controlLabel">Precio</span>
                 <div className="inputSecundaryContainer">
-                    <input type="checkbox" className="checkBoxInput" checked={props.activo} onChange={setActivo}/>
+                    <input type="number" className="textInput" value={props.precio} onChange={setPrecio}/>
+                </div>
+            </div>
+            <div className="controlContainer">
+                <span className="controlLabel">Examen</span>
+                <div className="inputSecundaryContainer">
+                    <input type="checkbox" className="checkBoxInput" checked={props.examen} onChange={setExamen}/>
                 </div>
             </div>
             <div className="controlContainer">
@@ -34,9 +44,12 @@ export default function MedicalServicesForm(props) {
                 </div>
             </div>
         </div>
+        <div className='messageContainer'>
+                <p>{props.mensaje}</p>
+        </div>
         <div className="crudControls">
-            <div className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></div>
-            <div className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></div>
+            <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
+            <button className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></button>
         </div>
     </div>
 };

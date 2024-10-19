@@ -98,7 +98,7 @@ export default function LeastCommonDiseases () {
             </div>
         </div>
         <div className='TableModalComponent' ref={targetRef}>
-            <h1>Diagnosticos menos comunes {fechaInicio} con {fechaFin}</h1>
+            <h1>Diagnosticos menos comunes {fechaInicio} a {fechaFin}</h1>
             <DataTable 
                 headers={encabezadosEnfermedadesMenosComunes}
                 rows={listaEnfermedadesMenosComunes}

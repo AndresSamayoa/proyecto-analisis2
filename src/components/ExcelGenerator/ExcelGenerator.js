@@ -23,7 +23,7 @@ const ExportExcel = ({ excelData, fileName, sheetName, buttonText }) => {
     };
 
     return <>
-        <button className="guardarBtn" onClick={()=> exportToExcel()}><i class="bi bi-cloud-arrow-down"></i> {buttonText || 'XSLX'}</button>
+        <button className="guardarBtn" onClick={()=> exportToExcel()}><i class="bi bi-cloud-arrow-down"></i> {buttonText || 'XLSX'}</button>
     </>
 }
 
