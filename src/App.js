@@ -1,23 +1,25 @@
 import './App.css';
 
 import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 
-import Header from './components/Header/Header';
-import PatientBasicScreen from './screens/PatientBasic/PatientBasicScreen';
-import MedicBasicScreen from './screens/MedicBasicScreen/MedicBasicScreen';
-import DateScreen from './screens/DateScreen/DateScreen';
-import MedicalServices from './screens/MedicalServicesScreen/MedicalServicesScreen';
-import WorkShiftScreen from './screens/WorkShiftScreen/WorkShiftScreen';
-import MedicationScreen from './screens/MedicationScreen/MedicationScreen';
-import DiseaseScreen from './screens/DiseaseScreen/DiseaseScreen';
-import DateDetailScreen from './screens/DateDetailScreen/DateDetailScreen';
-import DateReport from './components/DateReport/DateReport';
-import ScreenReport from './screens/ReportsScreen/ReportsScreen';
+const Header = lazy(() => import('./components/Header/Header'));
+const PatientBasicScreen = lazy(() => import('./screens/PatientBasic/PatientBasicScreen'));
+const MedicBasicScreen = lazy(() => import('./screens/MedicBasicScreen/MedicBasicScreen'));
+const DateScreen = lazy(() => import('./screens/DateScreen/DateScreen'));
+const MedicalServices = lazy(() => import('./screens/MedicalServicesScreen/MedicalServicesScreen'));
+const WorkShiftScreen = lazy(() => import('./screens/WorkShiftScreen/WorkShiftScreen'));
+const MedicationScreen = lazy(() => import('./screens/MedicationScreen/MedicationScreen'));
+const DiseaseScreen = lazy(() => import('./screens/DiseaseScreen/DiseaseScreen'));
+const DateDetailScreen = lazy(() => import('./screens/DateDetailScreen/DateDetailScreen'));
+const DateReport = lazy(() => import('./components/DateReport/DateReport'));
+const ScreenReport = lazy(() => import('./screens/ReportsScreen/ReportsScreen'));
 
 function App() {
   return (
     <>
       <Header />
+      <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route path='/patient/basic/crud' element={<PatientBasicScreen />}/>
         <Route path='/medic/basic/crud' element={<MedicBasicScreen />}/>
@@ -30,6 +32,7 @@ function App() {
         <Route path='/diseases/crud' element={<DiseaseScreen />}/>
         <Route path='/reports' element={<ScreenReport />}/>
       </Routes>
+      </Suspense>
     </>
   );
 }
