@@ -19,7 +19,7 @@ function App() {
   return (
     <>
       <Header />
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div class="loading">Loading&#8230;</div>}>
       <Routes>
         <Route path='/patient/basic/crud' element={<PatientBasicScreen />}/>
         <Route path='/medic/basic/crud' element={<MedicBasicScreen />}/>
