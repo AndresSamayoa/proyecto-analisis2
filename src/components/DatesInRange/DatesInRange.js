@@ -76,13 +76,13 @@ export default function DatesInRange () {
         <div className="reportSearcherInputs">
             <div className="controlContainer">
                 <span className="controlLabel">Fecha de inicio</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input type="date" className="dateInput" value={fechaInicio} onChange={setFechaInicioFn}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha de fin</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input type="date" className="dateInput" value={fechaFin} onChange={setFechaFinFn}/>
                 </div>
             </div>

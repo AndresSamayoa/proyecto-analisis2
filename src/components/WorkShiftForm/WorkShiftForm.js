@@ -69,25 +69,25 @@ export default function WorkShiftForm(props) {
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Hora de inicio (0-24)</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerFourth">
                     <input type="text" className="textInput" value={props.horaInicio} onChange={setHoraInicio}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Hora de fin (0-24)</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerFourth">
                     <input type="text" className="textInput" value={props.horaFin} onChange={setHoraFin}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha de inicio</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input type="date" className="dateInput" min={moment().add(1,'day').format('YYYY-MM-DD')} value={props.fechaInicio} onChange={setFechaInicio}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha de fin</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input type="date" className="dateInput" min={moment().add(1,'day').format('YYYY-MM-DD')} value={props.fechaFin} onChange={setFechaFin}/>
                 </div>
             </div>

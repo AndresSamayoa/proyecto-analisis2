@@ -36,26 +36,26 @@ export default function PatientForm(props) {
                 </div>
             </div>
             <div className="controlContainer">
-                <span className="controlLabel">Telefono</span>
-                <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" maxLength={8} value={props.telefono} onChange={setTelefono}/>
-                </div>
-            </div>
-            <div className="controlContainer">
                 <span className="controlLabel">Email</span>
                 <div className="inputSecundaryContainer">
                     <input type="email" className="textInput" value={props.email} onChange={setEmail}/>
                 </div>
             </div>
             <div className="controlContainer">
+                <span className="controlLabel">Telefono</span>
+                <div className="inputSecundaryContainerMid">
+                    <input type="text" className="textInput" maxLength={8} value={props.telefono} onChange={setTelefono}/>
+                </div>
+            </div>
+            <div className="controlContainer">
                 <span className="controlLabel">CUI</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input type="text" className="textInput" disabled={props.pacienteId > 0} maxLength={13} value={props.cui} onChange={setCui}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha de nacimiento</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input className="dateInput" type="date" max={moment().format('YYYY-MM-DD')} value={props.fechaNacimiento} onChange={setFechaNacimiento}/>
                 </div>
             </div>

@@ -23,7 +23,7 @@ export default function MedicationForm(props) {
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Precio</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input type="number" className="textInput" value={props.precio} onChange={setPrecio}/>
                 </div>
             </div>

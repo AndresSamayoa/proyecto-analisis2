@@ -35,26 +35,26 @@ export default function MedicBasicForm(props) {
                 </div>
             </div>
             <div className="controlContainer">
-                <span className="controlLabel">Telefono</span>
-                <div className="inputSecundaryContainer">
-                    <input type="text" className="textInput" maxLength={8} value={props.telefono} onChange={setTelefono}/>
-                </div>
-            </div>
-            <div className="controlContainer">
                 <span className="controlLabel">Email</span>
                 <div className="inputSecundaryContainer">
                     <input type="text" className="textInput" value={props.email} onChange={setEmail}/>
                 </div>
             </div>
             <div className="controlContainer">
+                <span className="controlLabel">Telefono</span>
+                <div className="inputSecundaryContainerMid">
+                    <input type="text" className="textInput" maxLength={8} value={props.telefono} onChange={setTelefono}/>
+                </div>
+            </div>
+            <div className="controlContainer">
                 <span className="controlLabel">Numero de colegiado</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input type="text" className="textInput" disabled={props.medicoId > 0} maxLength={13} value={props.numeroColegiado} onChange={setNumeroColegiado}/>
                 </div>
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Tipo</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <select className="comboBoxInput" value={props.tipo} onChange={setTipo}>
                         <option>Seleccione uno</option>
                         <option>Medico</option>

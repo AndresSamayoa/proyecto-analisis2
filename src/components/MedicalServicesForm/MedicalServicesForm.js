@@ -27,7 +27,7 @@ export default function MedicalServicesForm(props) {
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Precio</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerMid">
                     <input type="number" className="textInput" value={props.precio} onChange={setPrecio}/>
                 </div>
             </div>
@@ -47,7 +47,7 @@ export default function MedicalServicesForm(props) {
         <div className='messageContainer'>
                 <p>{props.mensaje}</p>
         </div>
-        <div className="crudControls">
+        <div className="crudFormControls">
             <button className="guardarBtn" onClick={props.guardarFn}><i class="bi bi-floppy"></i></button>
             <button className="cancelarBtn" onClick={props.cancelarFn}><i class="bi bi-x-lg"></i></button>
         </div>

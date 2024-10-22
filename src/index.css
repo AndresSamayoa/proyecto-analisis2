@@ -140,6 +140,18 @@ input[type="date"]::-webkit-input-placeholder{
   width: 100%;
 }
 
+.inputSecundaryContainerMid {
+  width: 50%;
+}
+
+.inputSecundaryContainerThird {
+  width: 75%;
+}
+
+.inputSecundaryContainerFourth {
+  width: 25%;
+}
+
 .textInput {
   background-color: white;
   border-color: black;

@@ -42,7 +42,7 @@ export default function DateForm(props) {
             </div>
             <div className="controlContainer">
                 <span className="controlLabel">Fecha</span>
-                <div className="inputSecundaryContainer">
+                <div className="inputSecundaryContainerThird">
                     <input className="dateInput" type="datetime-local" min={moment().add(1,'day').format('YYYY-MM-DDT00:00')} value={moment(props.fecha).format('YYYY-MM-DDTHH:mm')} onChange={setFecha}/>
                 </div>
             </div>
