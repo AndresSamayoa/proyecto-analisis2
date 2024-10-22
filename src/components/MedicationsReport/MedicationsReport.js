@@ -8,22 +8,21 @@ import ExportExcel from '../ExcelGenerator/ExcelGenerator';
 
 const base_url = process.env.REACT_APP_NODE_API_BASE;
 
-export default function DatesInRange () {
+export default function MedicationsReport () {
     const encabezadosEnfermedadesMenosComunes = [
-        {field: 'paciente', text: 'Paciente'},
-        {field: 'medico', text: 'Medico'},
-        {field: 'fecha', text: 'Fecha'},
-        {field: 'estado', text: 'Estado'}
+        {field: 'nombre', text: 'Nombre'},
+        {field: 'cantidad', text: 'Cantidad'},
+        {field: 'fecha', text: 'Fecha'}
     ];
 
     const consultarEnfermedadesMenosComunes = async () => {
         try {
             const response = await axios({
-                url: `${base_url}/api/citas/rangode/fecha`,
+                url: `${base_url}/api/medicamentos/reporte/rango`,
                 method: 'GET',
                 params: {
-                    fechainicio: fechaInicio,
-                    fechafin: fechaFin
+                    fecha_inicio: fechaInicio,
+                    fecha_fin: fechaFin
                 },
                 validateStatus: () => true,
                 timeout: 30000
@@ -31,15 +30,14 @@ export default function DatesInRange () {
 
             if (response.status === 200 && response.data.status) {
                 const data = [];
-                for (const date of response.data.data) {
+                for (const medication of response.data.data) {
                     data.push({
-                        paciente: date.PAC_nombre + ' ' + date.PAC_apellido,
-                        medico: date.MED_nombre + ' ' + date.MED_apellido,
-                        fecha: moment(date.CIT_fecha).format('DD-MM-YY HH:mm'),
-                        estado: date.CIT_estado,
+                        nombre: medication.Nombre_Medicamento,
+                        cantidad: medication.Cantidad,
+                        fecha: moment(medication.Fecha_cita).format('DD-MM-YY'),
                     });
                 }
-                setListaCitas(data);
+                setListaMedicamentos(data);
                 setListaLength(data.length);
             } else {
                 setMensaje(`Error al obtener los datos del reporte, codigo: ${response.status}${response.data.message ? ' ' + response.data.message : ''}`);
@@ -60,17 +58,17 @@ export default function DatesInRange () {
     const cancelarFn = () => {
         setFechaFin('');
         setFechaInicio('');
-        setListaCitas([]);
+        setListaMedicamentos([]);
         setListaLength(0)
     }
 
     const [fechaInicio, setFechaInicio] = useState(moment().format('YYYY-MM-DD'))
     const [fechaFin, setFechaFin] = useState(moment().format('YYYY-MM-DD'))
     const [mensaje, setMensaje] = useState('');
-    const [listaCitas, setListaCitas] = useState([]);
+    const [listaMedicamentos, setListaMedicamentos] = useState([]);
     const [listaLength, setListaLength] = useState(0);
 
-    const {toPDF, targetRef} = usePDF({filename: `Citas desde ${fechaInicio} hasta ${fechaFin}-${moment().format('YYYY-MM-DD HH:mm')}.pdf`});
+    const {toPDF, targetRef} = usePDF({filename: `Medicamentos recetados por dia entre ${fechaInicio} a ${fechaFin}-${moment().format('YYYY-MM-DD HH:mm')}.pdf`});
 
     return <div className='modalDiv'>
         <div className="reportSearcherInputs">
@@ -94,18 +92,18 @@ export default function DatesInRange () {
                 <button className="cancelarBtn" onClick={cancelarFn}><i class="bi bi-x-lg"></i></button>
                 {listaLength > 0 && <button className="guardarBtn" onClick={toPDF}><i class="bi bi-cloud-arrow-down"></i> PDF</button>}
                 {listaLength > 0 && <ExportExcel 
-                        excelData={listaCitas} 
-                        fileName={`Citas desde ${fechaInicio} hasta ${fechaFin}-${moment().format('YYYY-MM-DD hh:mm')}`}
+                        excelData={listaMedicamentos} 
+                        fileName={`Medicamentos recetados por dia entre ${fechaInicio} a ${fechaFin}-${moment().format('YYYY-MM-DD hh:mm')}`}
                         sheetName="Reporte"
                     />
                 }
             </div>
         </div>
         <div className='TableModalComponent' ref={targetRef}>
-            <h1>Citas desde {fechaInicio} hasta {fechaFin}</h1>
+            <h1>Medicamentos recetados por dia entre {fechaInicio} a {fechaFin}</h1>
             <DataTable 
                 headers={encabezadosEnfermedadesMenosComunes}
-                rows={listaCitas}
+                rows={listaMedicamentos}
                 wide={true}
             />
         </div>

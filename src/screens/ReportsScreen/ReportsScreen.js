@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import LeastCommonDiseases from '../../components/LeastCommonDiseases/LeastCommonDiseases';
 import MedicalSummaryReport from '../../components/MedicalSummaryReport/MedicalSummaryReport';
 import DatesInRange from '../../components/DatesInRange/DatesInRange';
+import MedicationsReport from '../../components/MedicationsReport/MedicationsReport';
 
 export default function ScreenReport () {
     Modal.setAppElement('#root');
@@ -11,6 +12,7 @@ export default function ScreenReport () {
     const [leastCommonDiseasesModal, setLeastCommonDiseasesModal] = useState(false);
     const [medicalSummaryModal, setMedicalSummaryModal] = useState(false);
     const [datesReportModal, setDatesReportModal] = useState(false);
+    const [medicationReportModal, setMedicationReportModal] = useState(false);
 
     return <div className='ReportScreen'>
         <div className="TitleContainer">
@@ -34,6 +36,12 @@ export default function ScreenReport () {
                 onClick={()=>{setMedicalSummaryModal(true)}}
             >
                 Ficha medica
+            </button>
+            <button
+                className='SearcherBtn'
+                onClick={()=>{setMedicationReportModal(true)}}
+            >
+                Reporte medicinas recetadas
             </button>
         </div>
         <Modal
@@ -73,6 +81,19 @@ export default function ScreenReport () {
                     <i onClick={()=>{setDatesReportModal(false)}} class="bi bi-x closeIcon" />
                 </div>
             <DatesInRange />
+            </div>
+        </Modal>
+        <Modal
+            isOpen={medicationReportModal}
+            onRequestClose={()=>{setMedicationReportModal(false)}}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
+        >
+            <div className='modalDiv'>
+                <div className='closeModalDiv'>
+                    <i onClick={()=>{setMedicationReportModal(false)}} class="bi bi-x closeIcon" />
+                </div>
+            <MedicationsReport />
             </div>
         </Modal>
     </div>
