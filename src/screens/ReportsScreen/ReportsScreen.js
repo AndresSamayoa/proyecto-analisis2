@@ -2,6 +2,7 @@ import { useState, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 
 const LeastCommonDiseases = lazy(()=> import ('../../components/LeastCommonDiseases/LeastCommonDiseases'));
+const MostCommonDiseases = lazy(()=> import ('../../components/MostCommonDiseases/MostCommonDiseases'));
 const MedicalSummaryReport = lazy(()=> import ('../../components/MedicalSummaryReport/MedicalSummaryReport'));
 const DatesInRange = lazy(()=> import ('../../components/DatesInRange/DatesInRange'));
 const MedicationsReport = lazy(()=> import ('../../components/MedicationsReport/MedicationsReport'));
@@ -10,6 +11,7 @@ export default function ScreenReport () {
     Modal.setAppElement('#root');
 
     const [leastCommonDiseasesModal, setLeastCommonDiseasesModal] = useState(false);
+    const [mostCommonDiseasesModal, setMostCommonDiseasesModal] = useState(false);
     const [medicalSummaryModal, setMedicalSummaryModal] = useState(false);
     const [datesReportModal, setDatesReportModal] = useState(false);
     const [medicationReportModal, setMedicationReportModal] = useState(false);
@@ -24,6 +26,12 @@ export default function ScreenReport () {
                 onClick={()=>{setLeastCommonDiseasesModal(true)}}
             >
                 Diagnosticos menos comunes
+            </button>
+            <button
+                className='SearcherBtn'
+                onClick={()=>{setMostCommonDiseasesModal(true)}}
+            >
+                Diagnosticos mas comunes
             </button>
             <button
                 className='SearcherBtn'
@@ -95,6 +103,19 @@ export default function ScreenReport () {
                     <i onClick={()=>{setMedicationReportModal(false)}} class="bi bi-x closeIcon" />
                 </div>
             <MedicationsReport />
+            </div>
+        </Modal>
+        <Modal
+            isOpen={mostCommonDiseasesModal}
+            onRequestClose={()=>{setMostCommonDiseasesModal(false)}}
+            shouldCloseOnEsc={true}
+            shouldCloseOnOverlayClick={true}
+        >
+            <div className='modalDiv'>
+                <div className='closeModalDiv'>
+                    <i onClick={()=>{setMostCommonDiseasesModal(false)}} class="bi bi-x closeIcon" />
+                </div>
+            <MostCommonDiseases />
             </div>
         </Modal>
         </Suspense>
