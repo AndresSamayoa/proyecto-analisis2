@@ -44,8 +44,11 @@ export default function MedicalServicesScreen () {
             if (!nombre || nombre.length < 1) {
                 errores.push('El nombre es un campo obligatorio.');
             }
-            if (!precio || precio < 0) {
-                errores.push('El precio es un campo obligatorio.');
+
+            if (!(/^\d+\.?\d*$/.test(precio))) {
+                errores.push('El precio es un campo obligatorio numerico positivo.');
+            } else if (Number(precio) < 0) {
+                errores.push('El precio debe ser mayor o igual a 0.');
             }
 
             if (errores.length > 0) {

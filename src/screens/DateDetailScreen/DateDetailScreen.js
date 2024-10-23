@@ -179,41 +179,57 @@ export default function DateScreen () {
                 url = base_url + '/api/Signosvitales'
             }
 
-            if (!presionArterial || presionArterial.length < 1) {
-                errores.push('La presion arterial es un campo obligatorio.');
+            if (!(/^\d+\.?\d*$/.test(presionArterial))) {
+                errores.push('La presion arterial es un campo obligatorio numerico positivo.');
+            } else if (Number(presionArterial) < 0) {
+                errores.push('La presion arterial debe ser mayor a 0.');
             }
 
-            if (!temperatura || temperatura.length < 1) {
-                errores.push('La temperatura es un campo obligatorio.');
+            if (!(/^\d+\.?\d*$/.test(temperatura))) {
+                errores.push('La temperatura es un campo obligatorio numerico positivo.');
+            } else if (Number(temperatura) < 0) {
+                errores.push('La temperatura debe ser mayor a 0.');
             }
 
-            if (!frecuenciaCardiaca || frecuenciaCardiaca.length < 1) {
-                errores.push('La frecuencia cardiaca es un campo obligatorio.');
+            if (!(/^\d+\.?\d*$/.test(frecuenciaCardiaca))) {
+                errores.push('La frecuencia cardiaca es un campo obligatorio numerico positivo.');
+            } else if (Number(frecuenciaCardiaca) < 0) {
+                errores.push('La frecuencia cardiaca ser mayor a 0.');
             }
 
-            if (!respiraciones || respiraciones.length < 1) {
-                errores.push('Las respiraciones por minuto es un campo obligatorio.');
+            if (!(/^\d+\.?\d*$/.test(respiraciones)) || respiraciones.length < 1) {
+                errores.push('Las respiraciones por minuto es un campo obligatorio numerico positivo.');
+            } else if (Number(respiraciones) < 0) {
+                errores.push('Las respiraciones debe ser mayor a 0.');
             }
 
-            if (!so2 || so2.length < 1) {
-                errores.push('La oxigenacion es un campo obligatorio.');
+            if (!(/^\d+\.?\d*$/.test(so2)) || so2.length < 1) {
+                errores.push('La oxigenacion es un campo obligatorio numerico positivo.');
+            } else if (Number(so2) < 0) {
+                errores.push('La oxigenacion debe ser mayor a 0.');
             }
 
-            if (!glucosa || glucosa.length < 1) {
-                errores.push('La glucosa es un campo obligatorio.');
+            if (!(/^\d+\.?\d*$/.test(glucosa)) || glucosa.length < 1) {
+                errores.push('La glucosa es un campo obligatorio numerico positivo.');
+            } else if (Number(glucosa) < 0) {
+                errores.push('La glucosa debe ser mayor a 0.');
             }
 
-            if (!peso || peso.length < 1) {
-                errores.push('El peso es un campo obligatorio.');
+            if (!(/^\d+\.?\d*$/.test(peso)) || peso.length < 1) {
+                errores.push('El peso es un campo obligatorio numerico positivo.');
+            } else if (Number(peso) < 0) {
+                errores.push('El peso debe ser mayor a 0.');
             }
 
-            if (!estatura || estatura.length < 1) {
-                errores.push('La estatura es un campo obligatorio.');
+            if (!(/^\d+\.?\d*$/.test(estatura)) || estatura.length < 1) {
+                errores.push('La estatura es un campo obligatorio numerico positivo.');
+            } else if (Number(estatura) < 0) {
+                errores.push('La estatura debe ser mayor a 0.');
             }
 
             if (errores.length > 0) {
                 let mensajeError = errores.join(' ');
-                setServiceMessage(mensajeError)
+                setMensaje(mensajeError)
                 return ;
             }
 

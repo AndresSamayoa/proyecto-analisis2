@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 
-import LeastCommonDiseases from '../../components/LeastCommonDiseases/LeastCommonDiseases';
-import MedicalSummaryReport from '../../components/MedicalSummaryReport/MedicalSummaryReport';
-import DatesInRange from '../../components/DatesInRange/DatesInRange';
-import MedicationsReport from '../../components/MedicationsReport/MedicationsReport';
+const LeastCommonDiseases = lazy(()=> import ('../../components/LeastCommonDiseases/LeastCommonDiseases'));
+const MedicalSummaryReport = lazy(()=> import ('../../components/MedicalSummaryReport/MedicalSummaryReport'));
+const DatesInRange = lazy(()=> import ('../../components/DatesInRange/DatesInRange'));
+const MedicationsReport = lazy(()=> import ('../../components/MedicationsReport/MedicationsReport'));
 
 export default function ScreenReport () {
     Modal.setAppElement('#root');
@@ -44,6 +44,7 @@ export default function ScreenReport () {
                 Reporte medicinas recetadas
             </button>
         </div>
+        <Suspense fallback={<div class="loading">Loading&#8230;</div>}>
         <Modal
             isOpen={medicalSummaryModal}
             onRequestClose={()=>{setMedicalSummaryModal(false)}}
@@ -96,5 +97,6 @@ export default function ScreenReport () {
             <MedicationsReport />
             </div>
         </Modal>
+        </Suspense>
     </div>
 }

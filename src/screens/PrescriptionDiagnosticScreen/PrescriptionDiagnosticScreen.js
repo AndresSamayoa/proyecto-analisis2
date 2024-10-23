@@ -45,8 +45,8 @@ export default function PrescriptionDiagnosticScreen (props) {
                 errores.push('El comentario es un campo obligatorio.');
             }
 
-            if (!quantity || isNaN(quantity) ) {
-                errores.push('La cantidad es un campo obligatorio y debe ser numerico.');
+            if (!(/^\d+\.?\d*$/.test(quantity)) ) {
+                errores.push('La cantidad es un campo obligatorio, debe ser numerico y positivo.');
             } else if (Number(quantity) < 1){
                 errores.push('La cantidad debe ser mayor a 0.');
             }

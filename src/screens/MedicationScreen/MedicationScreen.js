@@ -43,6 +43,11 @@ export default function MedicationScreen (props) {
             if (!nombre || nombre.trim().length < 1) {
                 errores.push('El nombre es un campo obligatorio.');
             }
+            if (!(/^\d+\.?\d*$/.test(precio))) {
+                errores.push('El precio es un campo obligatorio numerico positivo.');
+            } else if (Number(precio) <= 0) {
+                errores.push('El precio debe ser mayor o igual a 0.');
+            }
             if (!descripcion || descripcion.trim().length < 1) {
                 errores.push('La descripcion es un campo obligatorio.');
             }
