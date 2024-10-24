@@ -664,7 +664,6 @@ export default function DateScreen () {
                 <div className="TableDetailContainer">
                      <Link
                         to={'/date/summary/'+citaId}
-                        target='_blank'
                         className='LinkButtonContainer'
                     >
                     <button

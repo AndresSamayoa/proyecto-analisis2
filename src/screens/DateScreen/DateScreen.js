@@ -206,12 +206,12 @@ export default function DateScreen () {
                                 style={{color:"red"}} 
                                 class="bi bi-trash ActionItem"
                             ></i>
-                            <Link to={'/date/detail/'+date.CIT_id} target='_blank'> <i
+                            <Link to={'/date/detail/'+date.CIT_id}> <i
                                 style={{color:"blue"}} 
                                 class="bi bi-eye ActionItem"
                             ></i> </Link>
                             {date.CIT_estado === 'Completada' && 
-                                <Link to={'/date/summary/'+date.CIT_id} target='_blank'> <i
+                                <Link to={'/date/summary/'+date.CIT_id}> <i
                                     style={{color:"green"}} 
                                     class="bi bi-printer ActionItem"
                                 ></i> </Link>
